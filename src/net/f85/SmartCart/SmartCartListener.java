@@ -41,6 +41,8 @@ public class SmartCartListener implements Listener {
 
     SmartCartVehicle cart = SmartCart.util.getCartFromList( (Minecart) vehicle );
 
+    cart.saveCurrentLocation();
+
     // Return if minecart is marked for removal, or off rails for any reason
     if ( cart.getCart().isDead() || !cart.isOnRail() ) {
       return;
@@ -72,11 +74,6 @@ public class SmartCartListener implements Listener {
     // Return if minecart is marked for removal, or off rails for any reason
     if ( cart.getCart().isDead() || !cart.isOnRail() ) {
       return;
-    }
-
-    // If the cart is stopped, send instructions
-    if (!cart.isMoving()) {
-      SmartCart.util.sendMessage(event.getEntered(), "Tap in a direction to launch!");
     }
 
 
@@ -127,18 +124,20 @@ public class SmartCartListener implements Listener {
     // Now we know block is a control block and the redstone was activating.
     //   Time to take action!
 
-    Block block = spawnBlocks.get(0);
-    Location loc = block.getLocation();
+    Block block = spawnBlocks.get(0).getLocation().add(0D, 1D, 0D).getBlock();
 
     // spawn a cart
-    Minecart cart = loc.getWorld().spawn(loc.add(0.5D, 1D, 0.5D), Minecart.class);
-    SmartCartVehicle smartCart = SmartCart.util.getCartFromList(cart);
+    Minecart cart = SmartCart.util.spawnCart(block).getCart();
+    if (cart == null) {
+      return;
+    }
 
     // pick up a nearby player
-    double r = 4;
+    double r = SmartCart.config.getDouble("pickup_radius");
     for (Entity entity : cart.getNearbyEntities(r, r, r)) {
       if (entity instanceof Player && cart.getPassenger() == null && entity.getVehicle() == null) {
         cart.setPassenger(entity);
+        SmartCart.util.sendMessage(entity, "Move in the direction you wish to go.");
         break;
       }
     }

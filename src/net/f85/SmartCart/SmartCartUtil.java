@@ -139,23 +139,6 @@ searchloop:
   }
 
 
-  public boolean isNearCenterOfBlock(Entity entity) {
-    double x = Math.abs( entity.getLocation().getX() );
-    double z = Math.abs( entity.getLocation().getZ() );
-
-    // Just get the decimal part of the double
-    x = x - (int) x;
-    z = z - (int) z;
-
-    // Return true if we're in the middle area of the block
-    if (0.4 < x && x < 0.6 && 0.4 < z && z < 0.6) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-
   // This method returns a delineated list of the worlds on the server
   public String getWorldList(String separator) {
 
@@ -220,7 +203,7 @@ searchloop:
 
   public String getLocationString(Location loc) {
     return Integer.toString( loc.getBlockX() ) + ","
-      + Integer.toString( loc.getBlockX() ) + ","
+      + Integer.toString( loc.getBlockY() ) + ","
       + Integer.toString( loc.getBlockZ() );
   }
 
@@ -229,6 +212,22 @@ searchloop:
     int ticks = entity.getTicksLived();
     int seconds = ticks / 20;
     return String.format("%d:%02d", seconds/60, seconds%60);
+  }
+
+
+  public boolean isRail(Block block) {
+    if (block == null) {
+      return false;
+    }
+    if (block.getType() == Material.RAILS) {
+      return true;
+    }
+    return false;
+  }
+
+
+  public boolean isRail(Location loc) {
+    return isRail(loc.getBlock());
   }
 
 
@@ -255,6 +254,16 @@ searchloop:
       }
     }
     return true;
+  }
+
+
+  public SmartCartVehicle spawnCart(Block block) {
+    if ( isRail(block) ) {
+      Location loc = block.getLocation().add(0.5D,0D,0.5D);
+      Minecart cart = loc.getWorld().spawn(loc, Minecart.class);
+      return getCartFromList(cart);
+    }
+    return null;
   }
 
 

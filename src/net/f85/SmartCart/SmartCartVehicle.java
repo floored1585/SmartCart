@@ -17,6 +17,8 @@ public class SmartCartVehicle {
 
   private Minecart cart;
   private DyeColor previousWoolColor;
+  private Location currentLocation;
+  private Location previousLocation;
 
 
   public SmartCartVehicle(Minecart vehicle) {
@@ -28,11 +30,18 @@ public class SmartCartVehicle {
   public Minecart getCart() {
     return cart;
   }
+  public Location getPreviousLocation() {
+    return previousLocation;
+  }
   public DyeColor getPreviousWoolColor() {
     return previousWoolColor;
   }
   public void setPreviousWoolColor(DyeColor color) {
     previousWoolColor = color;
+  }
+  public void saveCurrentLocation() {
+    previousLocation = currentLocation;
+    currentLocation = getLocation();
   }
 
 
@@ -112,7 +121,7 @@ public class SmartCartVehicle {
       // Get location of passenger & add 1 to Y value)
       Location loc = passenger.getLocation();
       loc.setX( cart.getLocation().getBlockX() + 0.5D );
-      loc.setY( cart.getLocation().getBlockY() + 0.25D );
+      loc.setY( cart.getLocation().getBlockY());
       loc.setZ( cart.getLocation().getBlockZ() + 0.5D );
 
       passenger.teleport(loc);
@@ -144,12 +153,13 @@ public class SmartCartVehicle {
     switch ( wool.getColor() ) {
 
       case ORANGE:
+        setPreviousWoolColor(wool.getColor());
         setSpeed( SmartCart.config.getDouble("slow_cart_speed") );
         break;
 
       case YELLOW:
         // If the cart is near the center of the block, kill it.  Otherwise, slow it down.
-        if (SmartCart.util.isNearCenterOfBlock( (Entity) getCart() )) {
+        if ( isLeavingBlock() ) {
           remove(true);
         } else {
           setSpeed(0.1D);
@@ -157,14 +167,26 @@ public class SmartCartVehicle {
         break;
 
       case GREEN:
-        // If we have already executed this block, abort
+        // If we have already executed this block and aren't moving, abort.
+        //   If we have already executed this block and ARE moving, teleport the cart
+        //   in the direction the player is facing.
         if ( getPreviousWoolColor() == wool.getColor() ) {
+          if ( isMoving() && getBlockAheadPassenger() != null) {
+            Block blockAhead = getBlockAheadPassenger();
+            Entity passenger = getCart().getPassenger();
+            if (SmartCart.util.isRail(blockAhead)) {
+              remove(true);
+              cart = SmartCart.util.spawnCart(blockAhead).getCart();
+              getCart().setPassenger(passenger);
+            }
+          }
           return;
         }
         // If the cart is near the center of the block, stop it.  Otherwise, slow it down.
-        if (SmartCart.util.isNearCenterOfBlock( (Entity) getCart() )) {
+        if ( isLeavingBlock() ) {
           setPreviousWoolColor(wool.getColor());
           setSpeed(0D);
+          SmartCart.util.sendMessage(getCart().getPassenger(), "Move in the direction you wish to go.");
         } else {
           // Otherwise, slow the cart down
           setSpeed(0.1D);
@@ -179,6 +201,77 @@ public class SmartCartVehicle {
       return "None";
     }
     return getCart().getPassenger().getName();
+  }
+
+
+  // Returns the block directly ahead of the passenger
+  public Block getBlockAheadPassenger() {
+    // Get the passenger's direction as an integer
+    //   -1/3 = pos x
+    //   -2/2 = neg z
+    //   -3/1 = neg x
+    //   -4/0 = pos z
+    int passengerDir = Math.round( getCart().getPassenger().getLocation().getYaw() / 90f );
+    Block block = null;
+    switch (passengerDir) {
+      case 0:
+      case -4:
+        block = getCart().getLocation().add(0,0,1).getBlock();
+        break;
+      case 1:
+      case -3:
+        block = getCart().getLocation().add(-1,0,0).getBlock();
+        break;
+      case 2:
+      case -2:
+        block = getCart().getLocation().add(0,0,-1).getBlock();
+        break;
+      case 3:
+      case -1:
+        block = getCart().getLocation().add(1,0,0).getBlock();
+        break;
+    }
+    return block;
+  }
+
+
+  // Find out if the cart is headed towards or away from the middle of the current block
+  public boolean isLeavingBlock() {
+
+    // Gotta check to make sure this exists first
+    if (getPreviousLocation() == null) {
+      return false;
+    }
+    // If we just moved to a new block, the previous location is invalid for this check
+    if (getPreviousLocation().getBlockX() != getLocation().getBlockX()
+        || getPreviousLocation().getBlockY() != getLocation().getBlockY()
+        || getPreviousLocation().getBlockZ() != getLocation().getBlockZ()) {
+      return false;
+    }
+
+    // Get the previous and current locations
+    double prevX = Math.abs( getPreviousLocation().getX() );
+    double prevZ = Math.abs( getPreviousLocation().getZ() );
+    double currX = Math.abs( getLocation().getX() );
+    double currZ = Math.abs( getLocation().getZ() );
+
+    // Just get the decimal part of the double
+    prevX = prevX - (int) prevX;
+    prevZ = prevZ - (int) prevZ;
+    currX = currX - (int) currX;
+    currZ = currZ - (int) currZ;
+
+    // Get distance from the middle of the block
+    double prevDistFromMidX = Math.abs( prevX - 0.5 );
+    double prevDistFromMidZ = Math.abs( prevZ - 0.5 );
+    double currDistFromMidX = Math.abs( currX - 0.5 );
+    double currDistFromMidZ = Math.abs( currZ - 0.5 );
+
+    // Return true if we're headed away from the center of the block
+    if ( currDistFromMidX > prevDistFromMidX || currDistFromMidZ > prevDistFromMidZ ) {
+      return true;
+    }
+    return false;
   }
 
 
