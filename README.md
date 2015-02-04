@@ -1,15 +1,19 @@
 # SmartCart
 A simple, lightweight transportation plugin for MineCraft
 
+
 ## Features
 ### Control Blocks
-- Black Wool (spawn)
+- Black Wool (spawn - use adjacent button)
 - Yellow Wool (destroy)
-- Orange Wool (slow)
+- Green Wool (intersection)
 - Red Wool (elevator)
+- Orange Wool (slow)
 
 # Requirements
 This plugin is built against the [Spigot](http://www.spigotmc.org) MineCraft server.  Your mileage may vary with other servers.
+
+To install, simply place the JAR in your plugins folder.
 
 # Roadmap
 - Signs to control spawn & intersection blocks
