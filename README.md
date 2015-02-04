@@ -1,5 +1,4 @@
 # SmartCart
-=================
 A simple, lightweight transportation plugin for MineCraft
 
 ## Features
