@@ -19,6 +19,7 @@ public class SmartCartVehicle {
   private DyeColor previousWoolColor;
   private Location currentLocation;
   private Location previousLocation;
+  private int emptyCartTimer = 0;
 
 
   public SmartCartVehicle(Minecart vehicle) {
@@ -54,6 +55,19 @@ public class SmartCartVehicle {
   }
   public Location getLocation() {
     return getCart().getLocation();
+  }
+
+
+  public void setEmptyCartTimer() {
+    emptyCartTimer += 1;
+    if (emptyCartTimer > SmartCart.config.getInt("empty_cart_timer") * 20) {
+      remove(true);
+    }
+  }
+
+
+  public void resetEmptyCartTimer() {
+    emptyCartTimer = 0;
   }
 
 

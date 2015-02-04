@@ -42,6 +42,11 @@ public class SmartCartListener implements Listener {
     SmartCartVehicle cart = SmartCart.util.getCartFromList( (Minecart) vehicle );
 
     cart.saveCurrentLocation();
+    if (cart.getCart().getPassenger() == null) {
+      cart.setEmptyCartTimer();
+    } else {
+      cart.resetEmptyCartTimer();
+    }
 
     // Return if minecart is marked for removal, or off rails for any reason
     if ( cart.getCart().isDead() || !cart.isOnRail() ) {
