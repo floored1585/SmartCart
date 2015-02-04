@@ -139,6 +139,10 @@ public class SmartCartVehicle {
 
   public void executeControl() {
 
+    if (getCart().getPassenger() == null) {
+      return;
+    }
+
     Block block = getBlockBeneath();
 
     //------------------------------------------------------------\
@@ -192,6 +196,45 @@ public class SmartCartVehicle {
           setSpeed(0.1D);
         }
         break;
+
+      case RED:
+        // If we're not half way through the block, return
+        if ( !isLeavingBlock() ) {
+          setSpeed(0.1D);
+          return;
+        }
+        // If we just executed the elevator, return
+        if ( getPreviousWoolColor() == wool.getColor() ) {
+          return;
+        }
+
+        setPreviousWoolColor(wool.getColor());
+
+        // Get the tp target, destroy old cart, spawn new cart at tp target,
+        //   tp passenger, load passenger into new cart
+        Block elevator = SmartCart.util.getElevatorBlock(block.getLocation());
+        if (elevator == null) {
+          return;
+        }
+        Block tpTarget = elevator.getLocation().add(0,1,0).getBlock();
+        Entity passenger = getCart().getPassenger();
+        Vector cartVelocity = getCart().getVelocity();
+
+        // Set the new passenger location
+        Location passengerLoc = passenger.getLocation();
+        passengerLoc.setY( tpTarget.getLocation().getBlockY() );
+        // Kill the cart, spawn a new one
+        remove(true);
+        SmartCartVehicle newCart = SmartCart.util.spawnCart(tpTarget);
+        // Teleport passenger to new location and load them in the cart
+        passenger.teleport(passengerLoc);
+        newCart.getCart().setPassenger(passenger);
+        // Get the cart going!
+        newCart.getCart().setVelocity(cartVelocity);
+        newCart.setSpeed(1);
+        // Set the previous wool color of the new cart, to prevent a tp loop
+        newCart.setPreviousWoolColor(wool.getColor());
+        break;
     }
   }
 
@@ -211,6 +254,7 @@ public class SmartCartVehicle {
     //   -2/2 = neg z
     //   -3/1 = neg x
     //   -4/0 = pos z
+
     int passengerDir = Math.round( getCart().getPassenger().getLocation().getYaw() / 90f );
     Block block = null;
     switch (passengerDir) {
@@ -244,8 +288,12 @@ public class SmartCartVehicle {
     }
     // If we just moved to a new block, the previous location is invalid for this check
     if (getPreviousLocation().getBlockX() != getLocation().getBlockX()
-        || getPreviousLocation().getBlockY() != getLocation().getBlockY()
         || getPreviousLocation().getBlockZ() != getLocation().getBlockZ()) {
+      // This lets you chain control blocks by setting the prev wool color to null unless we
+      // just got off an elevator.
+      if (Math.abs(getPreviousLocation().getBlockY() - getLocation().getBlockY()) < 2) {
+        setPreviousWoolColor(null);
+      }
       return false;
     }
 

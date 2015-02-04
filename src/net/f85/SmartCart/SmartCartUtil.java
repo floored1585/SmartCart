@@ -98,8 +98,13 @@ public class SmartCartUtil {
 
 
   public boolean isControlBlock(Block block) {
-    Block blockAbove = block.getLocation().add(0D, 1D, 0D).getBlock();
+    Block blockAbove = block.getLocation().add(0,1,0).getBlock();
     return (block.getType() == Material.WOOL && blockAbove.getType() == Material.RAILS);
+  }
+
+
+  public boolean isElevatorBlock(Block block) {
+    return isControlBlock(block) && ( new Wool(block.getType(), block.getData()) ).getColor() == DyeColor.RED;
   }
 
 
@@ -262,6 +267,21 @@ searchloop:
       Location loc = block.getLocation().add(0.5D,0D,0.5D);
       Minecart cart = loc.getWorld().spawn(loc, Minecart.class);
       return getCartFromList(cart);
+    }
+    return null;
+  }
+
+
+  public Block getElevatorBlock(Location loc) {
+    Location cmdLoc = loc.clone();
+    for (int y = 0; y < 256; y++) {
+      if (y == cmdLoc.getBlockY()) {
+        continue;
+      }
+      loc.setY(y);
+      if (isElevatorBlock( loc.getBlock() )) {
+        return loc.getBlock();
+      }
     }
     return null;
   }
