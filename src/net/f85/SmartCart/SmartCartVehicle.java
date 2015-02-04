@@ -330,7 +330,9 @@ public class SmartCartVehicle {
     double currDistFromMidZ = Math.abs( currZ - 0.5 );
 
     // Return true if we're headed away from the center of the block
-    if ( currDistFromMidX > prevDistFromMidX || currDistFromMidZ > prevDistFromMidZ ) {
+    if ( currDistFromMidX > prevDistFromMidX
+        || currDistFromMidZ > prevDistFromMidZ
+        || (currDistFromMidX < 0.1 && currDistFromMidZ < 0.1) ) {
       return true;
     }
     return false;
