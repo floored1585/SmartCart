@@ -89,10 +89,9 @@ public class SmartCartUtil {
     }
   }
 
-  public void removeCart(ArrayList<SmartCartVehicle> removeCartList) {
+  public void killCarts(ArrayList<SmartCartVehicle> removeCartList) {
     for (SmartCartVehicle cart : removeCartList) {
-      cartList.remove(cart);
-      cart.getCart().remove();
+      cart.remove(true);
     }
   }
 
@@ -262,13 +261,30 @@ searchloop:
   }
 
 
+  public Minecart getCartAtBlock(Block block) {
+    for (Entity entity : block.getLocation().getChunk().getEntities() ) {
+      // If the entity is a minecart and on the location of the block passed, return the cart
+      if (entity instanceof Minecart
+          && entity.getLocation().getBlockX() == block.getLocation().getX()
+          && entity.getLocation().getBlockY() == block.getLocation().getY()
+          && entity.getLocation().getBlockZ() == block.getLocation().getZ() )
+      {
+        return (Minecart)entity;
+      }
+    }
+    return null;
+  }
+
+
   public SmartCartVehicle spawnCart(Block block) {
-    if ( isRail(block) ) {
+    // Check to make sure the block is a rail and no cart already exists here
+    Minecart cartAtBlock = getCartAtBlock(block);
+    if ( isRail(block) && cartAtBlock == null ) {
       Location loc = block.getLocation().add(0.5D,0D,0.5D);
       Minecart cart = loc.getWorld().spawn(loc, Minecart.class);
       return getCartFromList(cart);
     }
-    return null;
+    return getCartFromList(cartAtBlock);
   }
 
 

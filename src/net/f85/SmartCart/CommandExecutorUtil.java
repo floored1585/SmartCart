@@ -26,9 +26,9 @@ public class CommandExecutorUtil implements CommandExecutor {
   public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
     String commandHelp = "Usage:\n"
-      + "   /sc list [<world>]    -- List all minecarts (world optional)"
-      + "   /sc kill <id>         -- Destroy the specified minecart"
-      + "   /sc killall [<world>] -- Destroy all minecarts (world optional)";
+      + "   /sc list [<world>]  -- List all minecarts (world optional)\n"
+      + "   /sc kill <id>  -- Destroy the specified minecart\n"
+      + "   /sc killall [<world>]  -- Destroy all minecarts (world optional)";
     String badWorld = "The world you specified does not exist.  Valid worlds are: "
       + SmartCart.util.getWorldList(", ");
 
@@ -94,7 +94,7 @@ public class CommandExecutorUtil implements CommandExecutor {
         case "killall":
           if (argSize == 1) {
             SmartCart.util.sendMessage((Entity) sender, "Removing all carts on the server!");
-            SmartCart.util.removeCart(SmartCart.util.getCartList());
+            SmartCart.util.killCarts(SmartCart.util.getCartList());
             return true;
           }
           if (argSize == 2) {
@@ -107,7 +107,7 @@ public class CommandExecutorUtil implements CommandExecutor {
             }
             // Since it does exist, remove the carts in it
             SmartCart.util.sendMessage((Entity) sender, "Removing all carts in world: " + world.getName());
-            SmartCart.util.removeCart(SmartCart.util.getCartList(world));
+            SmartCart.util.killCarts(SmartCart.util.getCartList(world));
             return true;
           }
           break;
