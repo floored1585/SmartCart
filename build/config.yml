@@ -1,0 +1,5 @@
+boost_empty_carts: false
+normal_cart_speed: 1
+slow_cart_speed: 0.1
+pickup_radius: 3
+empty_cart_timer: 10

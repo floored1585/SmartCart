@@ -1,3 +1,2 @@
-build/*
-include/*
+build/net
 *.swp
