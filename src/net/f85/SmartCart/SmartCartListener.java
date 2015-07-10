@@ -53,6 +53,11 @@ public class SmartCartListener implements Listener {
       return;
     }
 
+    // Return if it isn't a player in the cart
+    if ( cart.getCart().getPassenger() != null && cart.getCart().getPassenger().getType() != EntityType.PLAYER ) {
+      return;
+    }
+
     if ( cart.isOnControlBlock() ) {
       cart.executeControl();
     }
@@ -71,6 +76,11 @@ public class SmartCartListener implements Listener {
 
     // Return if vehicle is not a minecart
     if (!( vehicle instanceof Minecart )) {
+      return;
+    }
+
+    // Return if it wasn't a player that entered
+    if ( event.getEntered().getType() != EntityType.PLAYER) {
       return;
     }
 
