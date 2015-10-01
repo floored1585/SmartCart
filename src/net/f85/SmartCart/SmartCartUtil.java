@@ -103,7 +103,7 @@ public class SmartCartUtil {
 
 
   public boolean isElevatorBlock(Block block) {
-    return isControlBlock(block) && ( new Wool(block.getType(), block.getData()) ).getColor() == DyeColor.RED;
+    return isControlBlock(block) && (new Wool(block.getType(), block.getData())).getColor() == DyeColor.RED;
   }
 
 

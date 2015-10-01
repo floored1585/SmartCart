@@ -7,6 +7,9 @@
 package net.f85.SmartCart;
 
 import org.bukkit.*;
+import org.bukkit.entity.minecart.*;
+import org.bukkit.entity.minecart.PoweredMinecart;
+import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.material.*;
 import org.bukkit.block.*;
 import org.bukkit.entity.*;
@@ -59,9 +62,21 @@ public class SmartCartVehicle {
 
 
   public void setEmptyCartTimer() {
-    emptyCartTimer += 1;
-    if (emptyCartTimer > SmartCart.config.getInt("empty_cart_timer") * 20) {
-      remove(true);
+    if(
+            SmartCart.config.getBoolean("empty_cart_timer_ignore_commandminecart", true) && isCommandMinecart() ||
+            SmartCart.config.getBoolean("empty_cart_timer_ignore_explosiveminecart", true) && isExplosiveMinecart() ||
+            SmartCart.config.getBoolean("empty_cart_timer_ignore_storagemincart", true) && isStorageMinecart() ||
+            SmartCart.config.getBoolean("empty_cart_timer_ignore_hoppermincart", true) && isHopperMinecart() ||
+            SmartCart.config.getBoolean("empty_cart_timer_ignore_poweredmincart", true) && isPoweredMinecart() ||
+            SmartCart.config.getBoolean("empty_cart_timer_ignore_spawnermincart", true) && isSpawnerMinecart() ||
+            SmartCart.config.getInt("empty_cart_timer") == 0
+    ) {
+      emptyCartTimer = 0;
+    } else {
+      emptyCartTimer += 1;
+      if (emptyCartTimer > SmartCart.config.getInt("empty_cart_timer") * 20) {
+        remove(true);
+      }
     }
   }
 
@@ -338,5 +353,31 @@ public class SmartCartVehicle {
     return false;
   }
 
+  public boolean isCommandMinecart() {
+    return getCart() instanceof CommandMinecart;
+  }
 
+  public boolean isExplosiveMinecart() {
+    return  getCart() instanceof ExplosiveMinecart;
+  }
+
+  public boolean isHopperMinecart() {
+    return getCart() instanceof HopperMinecart;
+  }
+
+  public boolean isPoweredMinecart() {
+    return getCart() instanceof PoweredMinecart;
+  }
+
+  public boolean isRideableMinecart() {
+    return getCart() instanceof RideableMinecart;
+  }
+
+  public boolean isSpawnerMinecart() {
+    return  getCart() instanceof SpawnerMinecart;
+  }
+
+  public boolean isStorageMinecart() {
+    return getCart() instanceof StorageMinecart;
+  }
 }
