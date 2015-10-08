@@ -19,7 +19,7 @@ To install, simply place the JAR in your plugins folder.
 ## Configuration
 The following config.yml options are available:
 | Keyword | Default | Description |
-|---------|---------|-------------|
+| ------- |:-------:| -----------:|
 | boost_empty_carts | false | Plugin ignores empty carts unless true |
 | normal_cart_speed | 1 | This doesn't do much at the moment |
 | slow_cart_speed | 0.1 | Adjust to change the speed when traveling over slowing blocks |
