@@ -19,7 +19,7 @@ For example:
 
 One sign can contain as many setting/value pairs as you can fit, but they must be separated by pipe symbols (<code>|</code>), and a single setting/value pair should not span lines on the sign ($MSG is an exception).
 If you have multiple lines of settings and values, remember to add a pipe symbol between the lines; it won't be added automatically.  It is also extrememly important to not add colons or pipes anywhere except as seperators.
-Below is a list of currently supported settings and values.  If you would like to see more, please open an issue here on GitHub or talk to me in-game at Uncovery.me!
+Below is a list of currently supported settings and values.  If you would like to see more, please open an issue here on GitHub or talk to me in-game at [Uncovery](http://www.uncovery.me)!
 
 | Setting | Example | Description |
 |:--------|:-------:|:------------|
