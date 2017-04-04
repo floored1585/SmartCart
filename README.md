@@ -1,5 +1,5 @@
 # SmartCart
-A simple, lightweight transportation plugin for MineCraft.  No powered rails required!
+A simple, lightweight transportation plugin for MineCraft.  No powered rails required!  [Download It Now!](https://github.com/floored1585/SmartCart/raw/master/bin/SmartCart.jar)
 
 ## Control Blocks
 - Black Wool (spawn - use adjacent button)
