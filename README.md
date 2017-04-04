@@ -25,7 +25,7 @@ Below is a list of currently supported settings and values.  If you would like t
 |:--------|:-------:|:------------|
 | $SPD | <code>$SPD:0.2</code> | Speed - Sets the speed of the cart. 0.4 is vanilla max cart speed. Must be numeric and within the bounds of the server settings. Leading zero and decimal are optional.|
 | $MSG | <code>$MSG:Hi There!</code> | Message - Sends the value text to cart's passenger. Do not use colons (<code>:</code>) or pipes (<code>\|</code>) in the text.|
-| $END | <code>$END:Oz</code> | Endpoint - Sets the endpoint that this cart will attempt to reach.  After setting $END, you can use signs under intersections (no wool) to direct the card to the correct endpoint. See example below.|
+| $END | <code>$END:Oz</code> | Endpoint - Sets the endpoint that this cart will attempt to reach.  After setting $END, you can use signs under intersections (no wool required) to direct the cart to the correct endpoint. See example below.|
 | Oz (example) | <code>Oz:W</code> | Endpoint direction - This instructs the cart which direction to go at an intersection (no wool required) to reach the endpoint on the sign.|
 
 
