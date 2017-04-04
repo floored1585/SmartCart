@@ -11,11 +11,11 @@ A simple, lightweight transportation plugin for MineCraft.  No powered rails req
 ## Control Signs
 Control signs must be placed two blocks below the rail (just under the supporting block).  To be recognized as control signs, the sign must begin with "SC: " (by default; this can be changed).  The text that follows this prefix must be in the following format:
 
-<code><setting>:<value>|<setting>:value></code>
+<code>\<setting>:\<value>|\<setting>:\<value></code>
 
 For example:
 
-<code>SC: $SPD:0.2|$MSG:Ciao Amigo</code> will cause the cart speed to be set at 0.2 (half of normal speed) and will send "Ciao Amigo" to the passenger.
+<code>SC: $SPD:0.2 | $MSG:Ciao Amigo</code> will cause the cart speed to be set at 0.2 (half of normal speed) and will send "Ciao Amigo" to the passenger. White space is trimmed (except on the prefix).
 
 One sign can contain as many setting/value pairs as you can fit, but they must be separated by pipe symbols (<code>|</code>), and a single setting/value pair should not span lines on the sign ($MSG is an exception).
 If you have multiple lines of settings and values, remember to add a pipe symbol between the lines; it won't be added automatically.  It is also extrememly important to not add colons or pipes anywhere except as seperators.
@@ -24,7 +24,7 @@ Below is a list of currently supported settings and values.  If you would like t
 | Setting | Example | Description |
 |:--------|:-------:|:------------|
 | $SPD | <code>$SPD:0.2</code> | Speed - Sets the speed of the cart. 0.4 is vanilla max cart speed. Must be numeric and within the bounds of the server settings. Leading zero and decimal are optional.|
-| $MSG | <code>$MSG:Hi There!</code> | Message - Sends the value text to cart's passenger. Do not use colons (<code>:</code>) or pipes (<code>|</code>) in the text.|
+| $MSG | <code>$MSG:Hi There!</code> | Message - Sends the value text to cart's passenger. Do not use colons (<code>:</code>) or pipes (<code>\|</code>) in the text.|
 
 
 ## Requirements
