@@ -27,11 +27,12 @@ Below is a list of currently supported settings and values.  If you would like t
 | $MSG | <code>$MSG:Hi There!</code> | Message - Sends the value text to cart's passenger. Do not use colons (<code>:</code>) or pipes (<code>\|</code>) in the text.|
 | $END | <code>$END:Oz</code> | Endpoint - Sets the endpoint that this cart will attempt to reach.  After setting $END, you can use signs under intersections (no wool required) to direct the cart to the correct endpoint. See example below.|
 | Oz (example) | <code>Oz:W</code> | Endpoint direction - This instructs the cart which direction to go at an intersection (no wool required) to reach the endpoint on the sign.|
+| $DEF | <code>$DEF:S</code> | Default direction - This instructs the cart which direction to go at an intersection (no wool required) if no other directions are matched.|
 
 
 ## Endpoints & Intersections
 
-This can be slightly confusing, so here is a full explanation.  With SmartCart, you can affix a label to a cart that tells it where it should end up.  For example, when a cart passes over $END:Oz, from then on the cart knows it is headed to Oz. Any time it encounters a control sign, it checks the sign for directions (in the format of Endpoint:Direction, where Endpoint would be "Oz" and Direction would be "N", "S", "E", or "W".  If the cart encounters a sign with directions, it attempts to move in that direction.  These directions are only useful under intersections.  Wool is not required for Endpoints to function, and will be ignored if valid directions are encountered. Regardless, is recommended to use intersection wool as a fallback in case someone hops on the track in the middle and misses the initial endpoint .assignment
+This can be slightly confusing, so here is a full explanation.  With SmartCart, you can affix a label to a cart that tells it where it should end up.  For example, when a cart passes over $END:Oz, from then on the cart knows it is headed to Oz. Any time it encounters a control sign, it checks the sign for directions (in the format of Endpoint:Direction, where Endpoint would be "Oz" and Direction would be "N", "S", "E", or "W".  If the cart encounters a sign with directions, it attempts to move in that direction.  These directions are only useful under intersections.  Wool is not required for Endpoints to function, and will be ignored if valid directions (or $DEF) are encountered. Regardless, is recommended to use intersection wool as a fallback unless you use $DEF, in case someone hops on the track in the middle and misses the initial endpoint assignment.
 
 
 ## Requirements
