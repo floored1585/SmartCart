@@ -29,6 +29,7 @@ public class SmartCartVehicle {
   private int emptyCartTimer = 0;
   // Settables
   private double configSpeed = SmartCart.config.getDouble("normal_cart_speed");
+  private String configEndpoint = "";
 
 
   public SmartCartVehicle(Minecart vehicle) {
@@ -52,6 +53,12 @@ public class SmartCartVehicle {
   }
   public void setConfigSpeed(Double speed) {
     configSpeed = speed;
+  }
+  public String getConfigEndpoint() {
+    return configEndpoint;
+  }
+  public void setConfigEndpoint(String endpoint) {
+    configEndpoint = endpoint;
   }
   public String getSignText() {
     return signText;
@@ -155,6 +162,8 @@ public class SmartCartVehicle {
     }
     String signText = m.replaceAll(""); // Remove the control prefix
 
+    Boolean foundEndpoint = false;
+
     for(String pair : signText.split("\\s*\\|\\s*")) {
       pair = pair.trim();
       p = Pattern.compile("^\\s*([^\\|:]+):([^\\|:]+)\\s*$");
@@ -166,23 +175,53 @@ public class SmartCartVehicle {
       String setting = m.group(1).trim();
       String value = m.group(2).trim();
 
-      switch (setting) {
-        case "$SPD":
-          p = Pattern.compile("^\\d*\\.?\\d+$");
-          Double minSpeed = 0D;
-          Double maxSpeed = SmartCart.config.getDouble("max_cart_speed");
-          if(!p.matcher(value).find() || Double.parseDouble(value)>maxSpeed || Double.parseDouble(value)<minSpeed) {
-            sendPassengerMessage("Bad speed value: \"" + value + "\". Must be a numeric value (decimals OK) between "
-                + minSpeed + " and " + maxSpeed + ".");
-            continue;
-          }
-          configSpeed = Double.parseDouble(value);
-          break;
-        case "$MSG":
-          sendPassengerMessage(value);
-          break;
-        default:
-          sendPassengerMessage("Unrecognized sign command: \"" + pair + "\"");
+      if(setting.equals("$SPD")) {
+        p = Pattern.compile("^\\d*\\.?\\d+$");
+        Double minSpeed = 0D;
+        Double maxSpeed = SmartCart.config.getDouble("max_cart_speed");
+        if(!p.matcher(value).find() || Double.parseDouble(value)>maxSpeed || Double.parseDouble(value)<minSpeed) {
+          sendPassengerMessage("Bad speed value: \"" + value + "\". Must be a numeric value (decimals OK) between "
+              + minSpeed + " and " + maxSpeed + ".");
+          continue;
+        }
+        configSpeed = Double.parseDouble(value);
+      }
+      else if(setting.equals("$MSG")) {
+        sendPassengerMessage(value);
+      }
+      else if(setting.equals("$END")) {
+        configEndpoint = value;
+        sendPassengerMessage("Endpoint set to " + value);
+      }
+      else if(setting.equals(configEndpoint) || setting.equals("$DEF")) {
+        // Skip this if we already found and used the endpoint
+        if(foundEndpoint) {
+          continue;
+        }
+        foundEndpoint = true;
+        Block blockAhead;
+        Vector vector;
+        if(value.equals("N")) {
+          blockAhead = cart.getLocation().add(0D,0D,-1D).getBlock();
+          vector = new Vector(0,0,-1);
+        } else if (value.equals("S")) {
+          blockAhead = cart.getLocation().add(0D,0D,1D).getBlock();
+          vector = new Vector(0,0,1);
+        } else if (value.equals("E")) {
+          blockAhead = cart.getLocation().add(1D,0D,0D).getBlock();
+          vector = new Vector(1,0,0);
+        } else { // W
+          blockAhead = cart.getLocation().add(-1D,0D,0D).getBlock();
+          vector = new Vector(-1,0,0);
+        }
+        Entity passenger = cart.getPassenger();
+        if (SmartCart.util.isRail(blockAhead)) {
+          remove(true);
+          SmartCartVehicle newSC = SmartCart.util.spawnCart(blockAhead);
+          newSC.getCart().setPassenger(passenger);
+          newSC.getCart().setVelocity(vector);
+          transferSettings(newSC);
+        }
       }
     }
   }
@@ -252,6 +291,7 @@ public class SmartCartVehicle {
 
   public void transferSettings(SmartCartVehicle newSC) {
     newSC.setConfigSpeed(configSpeed);
+    newSC.setConfigEndpoint(configEndpoint);
   }
 
 
