@@ -195,7 +195,8 @@ public class SmartCartVehicle {
       }
       else if(setting.equals(configEndpoint) || setting.equals("$DEF")) {
         // Skip this if we already found and used the endpoint
-        if(foundEndpoint) {
+        Entity passenger = cart.getPassenger();
+        if(foundEndpoint || passenger == null) {
           continue;
         }
         foundEndpoint = true;
@@ -214,7 +215,6 @@ public class SmartCartVehicle {
           blockAhead = cart.getLocation().add(-1D,0D,0D).getBlock();
           vector = new Vector(-1,0,0);
         }
-        Entity passenger = cart.getPassenger();
         if (SmartCart.util.isRail(blockAhead)) {
           remove(true);
           SmartCartVehicle newSC = SmartCart.util.spawnCart(blockAhead);
