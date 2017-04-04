@@ -119,7 +119,6 @@ public class SmartCartUtil {
 
     ArrayList<Block> blockList = new ArrayList<Block>();
 
-searchloop:
     for (double xOffset = radius; xOffset >= radius * -1; xOffset--) {
       for (double yOffset = radius; yOffset >= radius * -1; yOffset--) {
         for (double zOffset = radius; zOffset >= radius * -1; zOffset--) {

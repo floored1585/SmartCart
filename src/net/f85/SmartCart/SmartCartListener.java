@@ -58,12 +58,16 @@ public class SmartCartListener implements Listener {
       return;
     }
 
+    if(cart.isNewBlock()) {
+      cart.readControlSign();
+    }
+
     if ( cart.isOnControlBlock() ) {
       cart.executeControl();
     }
     else {
       cart.setPreviousWoolColor(null);
-      cart.setSpeed( SmartCart.config.getDouble("normal_cart_speed") );
+      cart.setSpeed( cart.getConfigSpeed() );
     }
 
   }

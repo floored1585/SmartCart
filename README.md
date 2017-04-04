@@ -8,6 +8,25 @@ A simple, lightweight transportation plugin for MineCraft.  No powered rails req
 - Red Wool (elevator)
 - Orange Wool (slow)
 
+## Control Signs
+Control signs must be placed two blocks below the rail (just under the supporting block).  To be recognized as control signs, the sign must begin with "SC: " (by default; this can be changed).  The text that follows this prefix must be in the following format:
+
+<code><setting>:<value>|<setting>:value></code>
+
+For example:
+
+<code>SC: $SPD:0.2|$MSG:Ciao Amigo</code> will cause the cart speed to be set at 0.2 (half of normal speed) and will send "Ciao Amigo" to the passenger.
+
+One sign can contain as many setting/value pairs as you can fit, but they must be separated by pipe symbols (<code>|</code>), and a single setting/value pair should not span lines on the sign ($MSG is an exception).
+If you have multiple lines of settings and values, remember to add a pipe symbol between the lines; it won't be added automatically.  It is also extrememly important to not add colons or pipes anywhere except as seperators.
+Below is a list of currently supported settings and values.  If you would like to see more, please open an issue here on GitHub or talk to me in-game at Uncovery.me!
+
+| Setting | Example | Description |
+|:--------|:-------:|:------------|
+| $SPD | <code>$SPD:0.2</code> | Speed - Sets the speed of the cart. 0.4 is vanilla max cart speed. Must be numeric and within the bounds of the server settings. Leading zero and decimal are optional.|
+| $MSG | <code>$MSG:Hi There!</code> | Message - Sends the value text to cart's passenger. Do not use colons (<code>:</code>) or pipes (<code>|</code>) in the text.|
+
+
 ## Requirements
 This plugin is built against the [Spigot](http://www.spigotmc.org) MineCraft server.  Your mileage may vary with other servers.
 
@@ -22,9 +41,11 @@ The following config.yml options are available:
 | Keyword | Default | Description |
 |:--------|:-------:|:------------|
 | boost_empty_carts | false | Plugin ignores empty carts unless true |
-| normal_cart_speed | 1 | This doesn't do much at the moment |
+| normal_cart_speed | 0.4 | This is the speed carts run at by default |
+| max_cart_speed | 0.4 | The fastest a cart will travel.  Expect problems with higher values. |
 | slow_cart_speed | 0.1 | Adjust to change the speed when traveling over slowing blocks |
 | pickup_radius | 3 | How many blocks away a freshly spawned cart will look for a player to grab |
+| control_sign_prefix_regex | "\\s+SC: " | A sign with text matching this regex will be considered a control sign |
 | empty_cart_timer | 10 | Number of seconds before an empty cart will despawn |
 | empty_cart_timer_ignore_storagemincart | true | empty_cart_timer is ignored for storage carts if true |
 | empty_cart_timer_ignore_spawnermincart | true | empty_cart_timer is ignored for spawner carts if true |

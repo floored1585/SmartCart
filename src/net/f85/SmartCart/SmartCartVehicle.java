@@ -14,19 +14,26 @@ import org.bukkit.material.*;
 import org.bukkit.block.*;
 import org.bukkit.entity.*;
 import org.bukkit.util.*;
+import java.util.regex.*;
+import java.util.Arrays;
 
 public class SmartCartVehicle {
-
 
   private Minecart cart;
   private DyeColor previousWoolColor;
   private Location currentLocation;
   private Location previousLocation;
+  private int[] currentRoughLocation;
+  private int[] previousRoughLocation;
+  private String signText;
   private int emptyCartTimer = 0;
+  // Settables
+  private double configSpeed = SmartCart.config.getDouble("normal_cart_speed");
 
 
   public SmartCartVehicle(Minecart vehicle) {
     cart = vehicle;
+    cart.setMaxSpeed(SmartCart.config.getDouble("max_cart_speed"));
   }
 
 
@@ -40,12 +47,25 @@ public class SmartCartVehicle {
   public DyeColor getPreviousWoolColor() {
     return previousWoolColor;
   }
+  public Double getConfigSpeed() {
+    return configSpeed;
+  }
+  public void setConfigSpeed(Double speed) {
+    configSpeed = speed;
+  }
+  public String getSignText() {
+    return signText;
+  }
   public void setPreviousWoolColor(DyeColor color) {
     previousWoolColor = color;
   }
   public void saveCurrentLocation() {
     previousLocation = currentLocation;
     currentLocation = getLocation();
+    previousRoughLocation = currentRoughLocation;
+    currentRoughLocation = new int[] {
+      currentLocation.getBlockX(), currentLocation.getBlockY(), currentLocation.getBlockZ()
+    };
   }
 
 
@@ -58,6 +78,11 @@ public class SmartCartVehicle {
   }
   public Location getLocation() {
     return getCart().getLocation();
+  }
+
+
+  public boolean isNewBlock() {
+    return !Arrays.equals(currentRoughLocation, previousRoughLocation);
   }
 
 
@@ -103,7 +128,66 @@ public class SmartCartVehicle {
     return SmartCart.util.isControlBlock( getCart().getLocation().add(0D, -1D, 0D).getBlock() );
   }
 
-  
+
+  // This looks two blocks below the rail for a sign. Sets the signText variable to
+  //   the sign contents if the sign is a valid control sign, otherwise "".
+  public void readControlSign() {
+    Block block = getCart().getLocation().add(0D, -2D, 0D).getBlock();
+    // Return if we're not over a sign
+    if (block.getType() != Material.WALL_SIGN && block.getType() != Material.SIGN_POST) {
+      return;
+    }
+    // Return if we're not on rails
+    if (!isOnRail()) {
+      return;
+    }
+    String text = "";
+    org.bukkit.block.Sign sign = (org.bukkit.block.Sign) block.getState(); // Cast to Sign
+    for( String value : sign.getLines() ) { // Merge all the sign's lines
+      text += (" " + value);
+    }
+    // Check to see if the sign string matches the control sign prefix; return otherwise
+    Pattern p = Pattern.compile(SmartCart.config.getString("control_sign_prefix_regex"));
+    Matcher m = p.matcher(text);
+    // Return if the control prefix isn't matched
+    if (!m.find()) {
+      return;
+    }
+    String signText = m.replaceAll(""); // Remove the control prefix
+
+    for(String pair : signText.split("\\s*\\|\\s*")) {
+      pair = pair.trim();
+      p = Pattern.compile("^\\s*([^\\|:]+):([^\\|:]+)\\s*$");
+      m = p.matcher(pair);
+      if (!m.find()) {
+        sendPassengerMessage("Bad sign formatting: \"" + pair + "\".  See https://github.com/floored1585/SmartCart for help.");
+        continue; // go to the next pair if it's not really a pair
+      }
+      String setting = m.group(1).trim();
+      String value = m.group(2).trim();
+
+      switch (setting) {
+        case "$SPD":
+          p = Pattern.compile("^\\d*\\.?\\d+$");
+          Double minSpeed = 0D;
+          Double maxSpeed = SmartCart.config.getDouble("max_cart_speed");
+          if(!p.matcher(value).find() || Double.parseDouble(value)>maxSpeed || Double.parseDouble(value)<minSpeed) {
+            sendPassengerMessage("Bad speed value: \"" + value + "\". Must be a numeric value (decimals OK) between "
+                + minSpeed + " and " + maxSpeed + ".");
+            continue;
+          }
+          configSpeed = Double.parseDouble(value);
+          break;
+        case "$MSG":
+          sendPassengerMessage(value);
+          break;
+        default:
+          sendPassengerMessage("Unrecognized sign command: \"" + pair + "\"");
+      }
+    }
+  }
+
+
   public boolean isMoving() {
     Vector velocity = getCart().getVelocity();
     return (velocity.getX() != 0D || velocity.getZ() != 0D);
@@ -166,6 +250,11 @@ public class SmartCartVehicle {
   }
 
 
+  public void transferSettings(SmartCartVehicle newSC) {
+    newSC.setConfigSpeed(configSpeed);
+  }
+
+
   public void executeControl() {
 
     if (getCart().getPassenger() == null) {
@@ -209,8 +298,9 @@ public class SmartCartVehicle {
             Entity passenger = getCart().getPassenger();
             if (SmartCart.util.isRail(blockAhead)) {
               remove(true);
-              cart = SmartCart.util.spawnCart(blockAhead).getCart();
-              getCart().setPassenger(passenger);
+              SmartCartVehicle newSC = SmartCart.util.spawnCart(blockAhead);
+              newSC.getCart().setPassenger(passenger);
+              transferSettings(newSC);
             }
           }
           return;
@@ -219,7 +309,7 @@ public class SmartCartVehicle {
         if ( isLeavingBlock() ) {
           setPreviousWoolColor(wool.getColor());
           setSpeed(0D);
-          SmartCart.util.sendMessage(getCart().getPassenger(), "Move in the direction you wish to go.");
+          sendPassengerMessage("Move in the direction you wish to go.");
         } else {
           // Otherwise, slow the cart down
           setSpeed(0.1D);
@@ -351,6 +441,14 @@ public class SmartCartVehicle {
       return true;
     }
     return false;
+  }
+
+  public void sendPassengerMessage(String message) {
+    message = "§6[SmartCart] " + message;
+    Entity entity = getPassenger();
+    if (entity instanceof Player) {
+      ((Player) entity).sendRawMessage(message);
+    }
   }
 
   public boolean isCommandMinecart() {
