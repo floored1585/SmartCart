@@ -353,6 +353,7 @@ public class SmartCartVehicle {
         newCart.setSpeed(1);
         // Set the previous wool color of the new cart, to prevent a tp loop
         newCart.setPreviousWoolColor(wool.getColor());
+        transferSettings(newCart);
         break;
     }
   }
