@@ -20,6 +20,7 @@ import org.bukkit.entity.minecart.HopperMinecart;
 import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.entity.minecart.PoweredMinecart;
 import org.bukkit.entity.minecart.SpawnerMinecart;
+import org.bukkit.material.Wool;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -300,49 +301,48 @@ public class SmartCartVehicle {
 
         Block block = getBlockBeneath();
         //plugin.getLogger().info(block.getState().getData().toString());
-        if(block.getState().getData().toString().contains("WOOL")){
-            if (block.getState().getData().toString().contains("ORANGE")) {
+        if (block.getState().getData().toString().contains("WOOL")) {
+            Wool wool = (Wool) block.getState();
+            if (wool.getColor() == DyeColor.ORANGE) {
                 setPreviousWoolColor(DyeColor.ORANGE);
                 setSpeed(SmartCart.config.getDouble("slow_cart_speed"));
             }
-            if (block.getState().getData().toString().contains("YELLOW")){
+            if (wool.getColor() == DyeColor.YELLOW) {
                 // If the cart is near the center of the block, kill it.  Otherwise, slow it down.
                 if (isLeavingBlock()) {
+                    Entity passenger = cart.getPassengers().get(0);
+                    remove(true);
                     //add code for checking for $EJT signs
                     Block blockOver = getCart().getLocation().add(0, -2, 0).getBlock();
-                    if(blockOver.getType() == Material.SIGN_POST || blockOver.getType() == Material.WALL_SIGN){
-                        Sign sign = (Sign)blockOver.getState();
-                        for(Pair<String, String> pair : parseSign(sign)){
-                            if(pair.left().equals("$EJT")){
-                                if(pair.right().length() == 2){
+                    if (blockOver.getType() == Material.SIGN_POST || blockOver.getType() == Material.WALL_SIGN) {
+                        Sign sign = (Sign) blockOver.getState();
+                        for (Pair<String, String> pair : parseSign(sign)) {
+                            if (pair.left().equals("$EJT")) {
+                                if (pair.right().length() == 2) {
                                     int dist = Integer.parseInt(pair.right().substring(1));
-                                    if(!cart.getPassengers().isEmpty()) {
-                                        switch (pair.right().charAt(0)) {
-                                            case 'N':
-                                                cart.teleport(cart.getLocation().add(0, 0, -dist));
-                                                break;
-                                            case 'E':
-                                                cart.teleport(cart.getLocation().add(dist, 0, 0));
-                                                break;
-                                            case 'S':
-                                                cart.teleport(cart.getLocation().add(0, 0, dist));
-                                                break;
-                                            default:
-                                                cart.teleport(cart.getLocation().add(-dist, 0, 0));
-                                                break;
-                                        }
+                                    switch (pair.right().charAt(0)) {
+                                        case 'N':
+                                            passenger.teleport(passenger.getLocation().add(0, 0, -dist));
+                                            break;
+                                        case 'E':
+                                            passenger.teleport(passenger.getLocation().add(dist, 0, 0));
+                                            break;
+                                        case 'S':
+                                            passenger.teleport(passenger.getLocation().add(0, 0, dist));
+                                            break;
+                                        default:
+                                            passenger.teleport(passenger.getLocation().add(-dist, 0, 0));
+                                            break;
                                     }
                                 }
                             }
                         }
                     }
-                    remove(true);
                 }
-                else {
-                    setSpeed(0.1D);
-                }
+            } else {
+                setSpeed(0.1D);
             }
-            if(block.getState().getData().toString().contains("GREEN")) {
+            if (wool.getColor() == DyeColor.GREEN) {
                 //   If we have already executed this block and ARE moving, teleport the cart
                 //   in the direction the player is facing.
                 if (getPreviousWoolColor() == DyeColor.GREEN) {
@@ -368,14 +368,14 @@ public class SmartCartVehicle {
                     setSpeed(0.1D);
                 }
             }
-            if(block.getState().getData().toString().contains("RED")){
+            if (wool.getColor() == DyeColor.RED) {
                 // If we're not half way through the block, return
-                if ( !isLeavingBlock() ) {
+                if (!isLeavingBlock()) {
                     setSpeed(0.1D);
                     return;
                 }
                 // If we just executed the elevator, return
-                if ( getPreviousWoolColor() == DyeColor.RED) {
+                if (getPreviousWoolColor() == DyeColor.RED) {
                     return;
                 }
 
@@ -387,13 +387,13 @@ public class SmartCartVehicle {
                 if (elevator == null) {
                     return;
                 }
-                Block tpTarget = elevator.getLocation().add(0,1,0).getBlock();
+                Block tpTarget = elevator.getLocation().add(0, 1, 0).getBlock();
                 Entity passenger = getCart().getPassengers().get(0);
                 Vector cartVelocity = getCart().getVelocity();
 
                 // Set the new passenger location
                 Location passengerLoc = passenger.getLocation();
-                passengerLoc.setY( tpTarget.getLocation().getBlockY() );
+                passengerLoc.setY(tpTarget.getLocation().getBlockY());
                 // Kill the cart, spawn a new one
                 remove(true);
                 SmartCartVehicle newCart = SmartCart.util.spawnCart(tpTarget);
@@ -411,145 +411,148 @@ public class SmartCartVehicle {
     }
 
 
-    public String getPassengerName() {
-        if (getCart().getPassengers().isEmpty()) {
-            return "None";
-        }
-        return getCart().getPassengers().get(0).getName();
-    }
-
-
-    // Returns the block directly ahead of the passenger
-    private Block getBlockAheadPassenger() {
-        // Get the passenger's direction as an integer
-        //   -1/3 = pos x
-        //   -2/2 = neg z
-        //   -3/1 = neg x
-        //   -4/0 = pos z
-        if(getCart().getPassengers().isEmpty()) return null;
-        int passengerDir = Math.round( getCart().getPassengers().get(0).getLocation().getYaw() / 90f );
-        Block block = null;
-        switch (passengerDir) {
-            case 0:
-            case -4:
-                block = getCart().getLocation().add(0,0,1).getBlock();
-                break;
-            case 1:
-            case -3:
-                block = getCart().getLocation().add(-1,0,0).getBlock();
-                break;
-            case 2:
-            case -2:
-                block = getCart().getLocation().add(0,0,-1).getBlock();
-                break;
-            case 3:
-            case -1:
-                block = getCart().getLocation().add(1,0,0).getBlock();
-                break;
-        }
-        return block;
-    }
-
-
-    // Find out if the cart is headed towards or away from the middle of the current block
-    private boolean isLeavingBlock() {
-
-        // Gotta check to make sure this exists first
-        if (getPreviousLocation() == null) {
-            return false;
-        }
-        // If we just moved to a new block, the previous location is invalid for this check
-        if (getPreviousLocation().getBlockX() != getLocation().getBlockX()
-                || getPreviousLocation().getBlockZ() != getLocation().getBlockZ()) {
-            // This lets you chain control blocks by setting the prev wool color to null unless we
-            // just got off an elevator.
-            if (Math.abs(getPreviousLocation().getBlockY() - getLocation().getBlockY()) < 2) {
-                setPreviousWoolColor(null);
+        public String getPassengerName() {
+            if (getCart().getPassengers().isEmpty()) {
+                return "None";
             }
-            return false;
+            return getCart().getPassengers().get(0).getName();
         }
 
-        // Get the previous and current locations
-        double prevX = Math.abs( getPreviousLocation().getX() );
-        double prevZ = Math.abs( getPreviousLocation().getZ() );
-        double currX = Math.abs( getLocation().getX() );
-        double currZ = Math.abs( getLocation().getZ() );
 
-        // Just get the decimal part of the double
-        prevX = prevX - (int) prevX;
-        prevZ = prevZ - (int) prevZ;
-        currX = currX - (int) currX;
-        currZ = currZ - (int) currZ;
-
-        // Get distance from the middle of the block
-        double prevDistFromMidX = Math.abs( prevX - 0.5 );
-        double prevDistFromMidZ = Math.abs( prevZ - 0.5 );
-        double currDistFromMidX = Math.abs( currX - 0.5 );
-        double currDistFromMidZ = Math.abs( currZ - 0.5 );
-
-        return currDistFromMidX > prevDistFromMidX || currDistFromMidZ > prevDistFromMidZ || (currDistFromMidX < 0.1 && currDistFromMidZ < 0.1);
-    }
-
-    private void sendPassengerMessage(String message) {
-        message = "§6[SmartCart] " + message;
-        Entity entity = getPassenger();
-        if (entity instanceof Player) {
-            ((Player) entity).sendRawMessage(message);
-        }
-    }
-
-    private boolean isCommandMinecart() {
-        return getCart() instanceof CommandMinecart;
-    }
-
-    private boolean isExplosiveMinecart() {
-        return  getCart() instanceof ExplosiveMinecart;
-    }
-
-    private boolean isHopperMinecart() {
-        return getCart() instanceof HopperMinecart;
-    }
-
-    private boolean isPoweredMinecart() {
-        return getCart() instanceof PoweredMinecart;
-    }
-
-    //public boolean isRideableMinecart() {
-    //    return getCart() instanceof RideableMinecart;
-    //}
-
-    private boolean isSpawnerMinecart() {
-        return  getCart() instanceof SpawnerMinecart;
-    }
-
-    private boolean isStorageMinecart() {
-        return getCart() instanceof StorageMinecart;
-    }
-
-    private List<Pair<String, String>> parseSign(Sign sign){
-        List<Pair<String, String>> ret = new ArrayList<>();
-        StringBuilder stringBuilder = new StringBuilder();for( String value : sign.getLines() ) { // Merge all the sign's lines
-            stringBuilder.append(value);
-        }
-        String text = stringBuilder.toString();
-        // Check to see if the sign string matches the control sign prefix; return otherwise
-        Pattern p = Pattern.compile(SmartCart.config.getString("control_sign_prefix_regex"));
-        Matcher m = p.matcher(text);
-        // Return if the control prefix isn't matched
-        if (!m.find()) return new ArrayList<>();
-        String signText = m.replaceAll(""); // Remove the control prefix
-
-        for(String pair : signText.split("\\s*\\|\\s*")) {
-            pair = pair.trim();
-            p = Pattern.compile("^\\s*([^:]+):([^:]+)\\s*$");
-            m = p.matcher(pair);
-            if (!m.find()) {
-                sendPassengerMessage("Bad sign formatting: \"" + pair + "\".  See https://github.com/floored1585/SmartCart for help.");
-                continue; // go to the next pair if it's not really a pair
+        // Returns the block directly ahead of the passenger
+        private Block getBlockAheadPassenger() {
+            // Get the passenger's direction as an integer
+            //   -1/3 = pos x
+            //   -2/2 = neg z
+            //   -3/1 = neg x
+            //   -4/0 = pos z
+            if(getCart().getPassengers().isEmpty()) return null;
+            int passengerDir = Math.round( getCart().getPassengers().get(0).getLocation().getYaw() / 90f );
+            Block block = null;
+            switch (passengerDir) {
+                case 0:
+                case -4:
+                    block = getCart().getLocation().add(0,0,1).getBlock();
+                    break;
+                case 1:
+                case -3:
+                    block = getCart().getLocation().add(-1,0,0).getBlock();
+                    break;
+                case 2:
+                case -2:
+                    block = getCart().getLocation().add(0,0,-1).getBlock();
+                    break;
+                case 3:
+                case -1:
+                    block = getCart().getLocation().add(1,0,0).getBlock();
+                    break;
             }
-            Pair<String, String> pair1 = new Pair<>(m.group(1), m.group(2));
-            ret.add(pair1);
+            return block;
         }
-        return ret;
+
+
+        // Find out if the cart is headed towards or away from the middle of the current block
+        private boolean isLeavingBlock() {
+
+            // Gotta check to make sure this exists first
+            if (getPreviousLocation() == null) {
+                return false;
+            }
+            // If we just moved to a new block, the previous location is invalid for this check
+            if (getPreviousLocation().getBlockX() != getLocation().getBlockX()
+                    || getPreviousLocation().getBlockZ() != getLocation().getBlockZ()) {
+                // This lets you chain control blocks by setting the prev wool color to null unless we
+                // just got off an elevator.
+                if (Math.abs(getPreviousLocation().getBlockY() - getLocation().getBlockY()) < 2) {
+                    setPreviousWoolColor(null);
+                }
+                return false;
+            }
+
+            // Get the previous and current locations
+            double prevX = Math.abs( getPreviousLocation().getX() );
+            double prevZ = Math.abs( getPreviousLocation().getZ() );
+            double currX = Math.abs( getLocation().getX() );
+            double currZ = Math.abs( getLocation().getZ() );
+
+            // Just get the decimal part of the double
+            prevX = prevX - (int) prevX;
+            prevZ = prevZ - (int) prevZ;
+            currX = currX - (int) currX;
+            currZ = currZ - (int) currZ;
+
+            // Get distance from the middle of the block
+            double prevDistFromMidX = Math.abs( prevX - 0.5 );
+            double prevDistFromMidZ = Math.abs( prevZ - 0.5 );
+            double currDistFromMidX = Math.abs( currX - 0.5 );
+            double currDistFromMidZ = Math.abs( currZ - 0.5 );
+
+            return currDistFromMidX > prevDistFromMidX || currDistFromMidZ > prevDistFromMidZ || (currDistFromMidX < 0.1 && currDistFromMidZ < 0.1);
+        }
+
+        private void sendPassengerMessage(String message) {
+            message = "§6[SmartCart] " + message;
+            Entity entity = getPassenger();
+            if (entity instanceof Player) {
+                ((Player) entity).sendRawMessage(message);
+            }
+        }
+
+        private boolean isCommandMinecart() {
+            return getCart() instanceof CommandMinecart;
+        }
+
+        private boolean isExplosiveMinecart() {
+            return  getCart() instanceof ExplosiveMinecart;
+        }
+
+        private boolean isHopperMinecart() {
+            return getCart() instanceof HopperMinecart;
+        }
+
+        private boolean isPoweredMinecart() {
+            return getCart() instanceof PoweredMinecart;
+        }
+
+        //public boolean isRideableMinecart() {
+        //    return getCart() instanceof RideableMinecart;
+        //}
+
+        private boolean isSpawnerMinecart() {
+            return  getCart() instanceof SpawnerMinecart;
+        }
+
+        private boolean isStorageMinecart() {
+            return getCart() instanceof StorageMinecart;
+        }
+
+        private List<Pair<String, String>> parseSign(Sign sign){
+            for(String line : sign.getLines()){
+                plugin.getLogger().info(line);
+            }
+            List<Pair<String, String>> ret = new ArrayList<>();
+            StringBuilder stringBuilder = new StringBuilder();
+            for( String value : sign.getLines() ) { // Merge all the sign's lines
+                stringBuilder.append(value);
+            }
+            String text = stringBuilder.toString();
+            // Check to see if the sign string matches the control sign prefix; return otherwise
+            Pattern p = Pattern.compile(SmartCart.config.getString("control_sign_prefix_regex"));
+            Matcher m = p.matcher(text);
+            // Return if the control prefix isn't matched
+            if (!m.find()) return new ArrayList<>();
+            String signText = m.replaceAll(""); // Remove the control prefix
+            signText = signText.replaceAll("\\s+", "");
+            for(String pair : signText.split("\\|")) {
+                pair = pair.trim();
+                p = Pattern.compile("([^\\|:]+):([^\\|:]+)");
+                m = p.matcher(pair);
+                if (!m.find()) {
+                    sendPassengerMessage("Bad sign formatting: \"" + pair + "\".  See https://github.com/floored1585/SmartCart for help.");
+                    continue; // go to the next pair if it's not really a pair
+                }
+                ret.add(new Pair<>(m.group(1), m.group(2)));
+            }
+            return ret;
+        }
     }
-}
