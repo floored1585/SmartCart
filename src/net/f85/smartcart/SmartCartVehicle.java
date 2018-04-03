@@ -10,6 +10,7 @@ import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
@@ -17,11 +18,13 @@ import org.bukkit.entity.minecart.CommandMinecart;
 import org.bukkit.entity.minecart.ExplosiveMinecart;
 import org.bukkit.entity.minecart.HopperMinecart;
 import org.bukkit.entity.minecart.StorageMinecart;
-//import org.bukkit.entity.minecart.RideableMinecart;
 import org.bukkit.entity.minecart.PoweredMinecart;
 import org.bukkit.entity.minecart.SpawnerMinecart;
 import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -158,53 +161,29 @@ public class SmartCartVehicle {
         if (isNotOnRail()) {
             return;
         }
-        StringBuilder stringBuilder = new StringBuilder();
-        org.bukkit.block.Sign sign = (org.bukkit.block.Sign) block.getState(); // Cast to Sign
-        for( String value : sign.getLines() ) { // Merge all the sign's lines
-            stringBuilder.append(value);
-        }
-        String text = stringBuilder.toString();
-        // Check to see if the sign string matches the control sign prefix; return otherwise
-        Pattern p = Pattern.compile(SmartCart.config.getString("control_sign_prefix_regex"));
-        Matcher m = p.matcher(text);
-        // Return if the control prefix isn't matched
-        if (!m.find()) {
-            return;
-        }
-        String signText = m.replaceAll(""); // Remove the control prefix
-
-        Boolean foundEndpoint = false;
-
-        for(String pair : signText.split("\\s*\\|\\s*")) {
-            pair = pair.trim();
-            p = Pattern.compile("^\\s*([^:]+):([^:]+)\\s*$");
-            m = p.matcher(pair);
-            if (!m.find()) {
-                sendPassengerMessage("Bad sign formatting: \"" + pair + "\".  See https://github.com/floored1585/SmartCart for help.");
-                continue; // go to the next pair if it's not really a pair
-            }
-            String setting = m.group(1).trim();
-            String value = m.group(2).trim();
-
-            if(setting.equals("$SPD")) {
+        boolean foundEndpoint = false;
+        Sign sign = (Sign) block.getState(); // Cast to Sign
+        for(Pair<String, String> pair : parseSign(sign)){
+            Pattern p;
+            if(pair.left().equals("$SPD")) {
                 p = Pattern.compile("^\\d*\\.?\\d+$");
                 Double minSpeed = 0D;
                 Double maxSpeed = SmartCart.config.getDouble("max_cart_speed");
-                if(!p.matcher(value).find() || Double.parseDouble(value)>maxSpeed || Double.parseDouble(value)<minSpeed) {
-                    sendPassengerMessage("Bad speed value: \"" + value + "\". Must be a numeric value (decimals OK) between "
+                if(!p.matcher(pair.right()).find() || Double.parseDouble(pair.right())>maxSpeed || Double.parseDouble(pair.right())<minSpeed) {
+                    sendPassengerMessage("Bad speed value: \"" + pair.right() + "\". Must be a numeric value (decimals OK) between "
                             + minSpeed + " and " + maxSpeed + ".");
                     continue;
                 }
-                configSpeed = Double.parseDouble(value);
+                configSpeed = Double.parseDouble(pair.right());
             }
-            else if(setting.equals("$MSG")) {
-                sendPassengerMessage(value);
+            else if(pair.left().equals("$MSG")) {
+                sendPassengerMessage(pair.right());
             }
-            else if(setting.equals("$END")) {
-                configEndpoint = value;
-                sendPassengerMessage("Endpoint set to " + value);
+            else if(pair.left().equals("$END")) {
+                configEndpoint = pair.right();
+                sendPassengerMessage("Endpoint set to " + pair.right());
             }
-            else if(setting.equals(configEndpoint) || setting.equals("$DEF")) {
+            else if(pair.left().equals(configEndpoint) || pair.left().equals("$DEF")) {
                 // Skip this if we already found and used the endpoint
                 Entity passenger = null;
                 if(!cart.getPassengers().isEmpty()) {
@@ -216,7 +195,7 @@ public class SmartCartVehicle {
                 foundEndpoint = true;
                 Block blockAhead;
                 Vector vector;
-                switch(value){
+                switch(pair.right()){
                     case "N":
                         blockAhead = cart.getLocation().add(0D,0D,-1D).getBlock();
                         vector = new Vector(0,0,-1);
@@ -330,7 +309,10 @@ public class SmartCartVehicle {
                 // If the cart is near the center of the block, kill it.  Otherwise, slow it down.
                 if (isLeavingBlock()) {
                     remove(true);
-                } else {
+                    //add code for checking for $EJT signs
+
+                }
+                else {
                     setSpeed(0.1D);
                 }
             }
@@ -516,5 +498,34 @@ public class SmartCartVehicle {
 
     private boolean isStorageMinecart() {
         return getCart() instanceof StorageMinecart;
+    }
+
+    public List<Pair<String, String>> parseSign(Sign sign){
+        List<Pair<String, String>> ret = new ArrayList<>();
+        StringBuilder stringBuilder = new StringBuilder();for( String value : sign.getLines() ) { // Merge all the sign's lines
+            stringBuilder.append(value);
+        }
+        String text = stringBuilder.toString();
+        // Check to see if the sign string matches the control sign prefix; return otherwise
+        Pattern p = Pattern.compile(SmartCart.config.getString("control_sign_prefix_regex"));
+        Matcher m = p.matcher(text);
+        // Return if the control prefix isn't matched
+        if (!m.find()) {
+            return null;
+        }
+        String signText = m.replaceAll(""); // Remove the control prefix
+
+        for(String pair : signText.split("\\s*\\|\\s*")) {
+            pair = pair.trim();
+            p = Pattern.compile("^\\s*([^:]+):([^:]+)\\s*$");
+            m = p.matcher(pair);
+            if (!m.find()) {
+                sendPassengerMessage("Bad sign formatting: \"" + pair + "\".  See https://github.com/floored1585/SmartCart for help.");
+                continue; // go to the next pair if it's not really a pair
+            }
+            Pair<String, String> pair1 = new Pair<>(m.group(1), m.group(2));
+            ret.add(pair1);
+        }
+        return ret;
     }
 }
