@@ -308,9 +308,35 @@ public class SmartCartVehicle {
             if (block.getState().getData().toString().contains("YELLOW")){
                 // If the cart is near the center of the block, kill it.  Otherwise, slow it down.
                 if (isLeavingBlock()) {
-                    remove(true);
                     //add code for checking for $EJT signs
-
+                    Block blockOver = getCart().getLocation().add(0, -2, 0).getBlock();
+                    if(blockOver.getType() == Material.SIGN_POST || blockOver.getType() == Material.WALL_SIGN){
+                        Sign sign = (Sign)blockOver.getState();
+                        for(Pair<String, String> pair : parseSign(sign)){
+                            if(pair.left().equals("$EJT")){
+                                if(pair.right().length() == 2){
+                                    int dist = Integer.parseInt(pair.right().substring(1));
+                                    if(!cart.getPassengers().isEmpty()) {
+                                        switch (pair.right().charAt(0)) {
+                                            case 'N':
+                                                cart.teleport(cart.getLocation().add(0, 0, -dist));
+                                                break;
+                                            case 'E':
+                                                cart.teleport(cart.getLocation().add(dist, 0, 0));
+                                                break;
+                                            case 'S':
+                                                cart.teleport(cart.getLocation().add(0, 0, dist));
+                                                break;
+                                            default:
+                                                cart.teleport(cart.getLocation().add(-dist, 0, 0));
+                                                break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    remove(true);
                 }
                 else {
                     setSpeed(0.1D);
@@ -500,7 +526,7 @@ public class SmartCartVehicle {
         return getCart() instanceof StorageMinecart;
     }
 
-    public List<Pair<String, String>> parseSign(Sign sign){
+    private List<Pair<String, String>> parseSign(Sign sign){
         List<Pair<String, String>> ret = new ArrayList<>();
         StringBuilder stringBuilder = new StringBuilder();for( String value : sign.getLines() ) { // Merge all the sign's lines
             stringBuilder.append(value);
@@ -510,9 +536,7 @@ public class SmartCartVehicle {
         Pattern p = Pattern.compile(SmartCart.config.getString("control_sign_prefix_regex"));
         Matcher m = p.matcher(text);
         // Return if the control prefix isn't matched
-        if (!m.find()) {
-            return null;
-        }
+        if (!m.find()) return new ArrayList<>();
         String signText = m.replaceAll(""); // Remove the control prefix
 
         for(String pair : signText.split("\\s*\\|\\s*")) {
