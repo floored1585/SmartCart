@@ -140,7 +140,7 @@ public class SmartCartUtil {
 
     // Send a message to the player
     public void sendMessage(Entity entity, String message) {
-        message = "§6[SmartCart] " + message;
+        message = "§6[SmartCart] §7" + message;
         if (entity instanceof Player) {
             ((Player) entity).sendRawMessage(message);
         }

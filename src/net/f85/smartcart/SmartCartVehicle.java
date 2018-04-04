@@ -20,7 +20,6 @@ import org.bukkit.entity.minecart.HopperMinecart;
 import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.entity.minecart.PoweredMinecart;
 import org.bukkit.entity.minecart.SpawnerMinecart;
-import org.bukkit.material.Wool;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -167,10 +166,10 @@ public class SmartCartVehicle {
         for(Pair<String, String> pair : parseSign(sign)){
             Pattern p;
             if(pair.left().equals("$SPD")) {
-                p = Pattern.compile("^\\d*\\.?\\d+$");
+                p = Pattern.compile("^\\d*\\.?\\d+");
                 Double minSpeed = 0D;
                 Double maxSpeed = SmartCart.config.getDouble("max_cart_speed");
-                if(!p.matcher(pair.right()).find() || Double.parseDouble(pair.right())>maxSpeed || Double.parseDouble(pair.right())<minSpeed) {
+                if(!p.matcher(pair.right()).find() || Double.parseDouble(pair.right()) > maxSpeed || Double.parseDouble(pair.right()) < minSpeed) {
                     sendPassengerMessage("Bad speed value: \"" + pair.right() + "\". Must be a numeric value (decimals OK) between "
                             + minSpeed + " and " + maxSpeed + ".");
                     continue;
@@ -184,6 +183,10 @@ public class SmartCartVehicle {
                 configEndpoint = pair.right();
                 sendPassengerMessage("Endpoint set to " + pair.right());
             }
+            else if(pair.left().equals("$TAG")){
+                configEndpoint = pair.right();
+                sendPassengerMessage("Set tag to " + pair.right());
+            }
             else if(pair.left().equals(configEndpoint) || pair.left().equals("$DEF")) {
                 // Skip this if we already found and used the endpoint
                 Entity passenger = null;
@@ -194,8 +197,8 @@ public class SmartCartVehicle {
                     continue;
                 }
                 foundEndpoint = true;
-                Block blockAhead;
-                Vector vector;
+                Block blockAhead = null;
+                Vector vector = new Vector(0, 0, 0);
                 switch(pair.right()){
                     case "N":
                         blockAhead = cart.getLocation().add(0D,0D,-1D).getBlock();
@@ -209,7 +212,7 @@ public class SmartCartVehicle {
                         blockAhead = cart.getLocation().add(1D,0D,0D).getBlock();
                         vector = new Vector(1,0,0);
                         break;
-                    default:
+                    case "W":
                         blockAhead = cart.getLocation().add(-1D,0D,0D).getBlock();
                         vector = new Vector(-1,0,0);
                         break;
@@ -302,19 +305,19 @@ public class SmartCartVehicle {
         Block block = getBlockBeneath();
         //plugin.getLogger().info(block.getState().getData().toString());
         if (block.getState().getData().toString().contains("WOOL")) {
-            Wool wool = (Wool) block.getState();
-            if (wool.getColor() == DyeColor.ORANGE) {
+            //Wool wool = (Wool) (org.bukkit.block.BlockState)block.getState();
+            if (block.getState().getData().toString().contains("ORANGE")) {
                 setPreviousWoolColor(DyeColor.ORANGE);
                 setSpeed(SmartCart.config.getDouble("slow_cart_speed"));
             }
-            if (wool.getColor() == DyeColor.YELLOW) {
+            if (block.getState().getData().toString().contains("YELLOW")) {
                 // If the cart is near the center of the block, kill it.  Otherwise, slow it down.
                 if (isLeavingBlock()) {
                     Entity passenger = cart.getPassengers().get(0);
                     remove(true);
                     //add code for checking for $EJT signs
                     Block blockOver = getCart().getLocation().add(0, -2, 0).getBlock();
-                    if (blockOver.getType() == Material.SIGN_POST || blockOver.getType() == Material.WALL_SIGN) {
+                    if (blockOver.getType() == Material.SIGN || blockOver.getType() == Material.SIGN_POST || blockOver.getType() == Material.WALL_SIGN) {
                         Sign sign = (Sign) blockOver.getState();
                         for (Pair<String, String> pair : parseSign(sign)) {
                             if (pair.left().equals("$EJT")) {
@@ -330,8 +333,14 @@ public class SmartCartVehicle {
                                         case 'S':
                                             passenger.teleport(passenger.getLocation().add(0, 0, dist));
                                             break;
-                                        default:
+                                        case 'W':
                                             passenger.teleport(passenger.getLocation().add(-dist, 0, 0));
+                                            break;
+                                        case 'U':
+                                            passenger.teleport(passenger.getLocation().add(0, dist, 0));
+                                            break;
+                                        case 'D':
+                                            passenger.teleport(passenger.getLocation().add(0, -dist, 0));
                                             break;
                                     }
                                 }
@@ -342,7 +351,7 @@ public class SmartCartVehicle {
             } else {
                 setSpeed(0.1D);
             }
-            if (wool.getColor() == DyeColor.GREEN) {
+            if (block.getState().getData().toString().contains("GREEN")) {
                 //   If we have already executed this block and ARE moving, teleport the cart
                 //   in the direction the player is facing.
                 if (getPreviousWoolColor() == DyeColor.GREEN) {
@@ -368,7 +377,7 @@ public class SmartCartVehicle {
                     setSpeed(0.1D);
                 }
             }
-            if (wool.getColor() == DyeColor.RED) {
+            if (block.getState().getData().toString().contains("RED")) {
                 // If we're not half way through the block, return
                 if (!isLeavingBlock()) {
                     setSpeed(0.1D);
@@ -542,16 +551,13 @@ public class SmartCartVehicle {
             // Return if the control prefix isn't matched
             if (!m.find()) return new ArrayList<>();
             String signText = m.replaceAll(""); // Remove the control prefix
-            signText = signText.replaceAll("\\s+", "");
             for(String pair : signText.split("\\|")) {
-                pair = pair.trim();
-                p = Pattern.compile("([^\\|:]+):([^\\|:]+)");
-                m = p.matcher(pair);
-                if (!m.find()) {
-                    sendPassengerMessage("Bad sign formatting: \"" + pair + "\".  See https://github.com/floored1585/SmartCart for help.");
-                    continue; // go to the next pair if it's not really a pair
+                String[] tokens = pair.split(":");
+                tokens[0] = tokens[0].replaceAll("\\s+", "");
+                if(!tokens[0].contains("MSG")){
+                    tokens[1] = tokens[1].replaceAll("\\s+", "");
                 }
-                ret.add(new Pair<>(m.group(1), m.group(2)));
+                ret.add(new Pair<>(tokens[0], tokens[1]));
             }
             return ret;
         }

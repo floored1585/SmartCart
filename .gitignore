@@ -1,3 +1,15 @@
 build/net
 /out/*
 *.swp
+server.properties
+whitelist.json
+banned-ips.json
+banned-players.json
+bukkit.yml
+commands.yml
+eula.txt
+help.yml
+ops.json
+spigot.yml
+/logs/*
+/plugins/*
