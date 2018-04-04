@@ -303,9 +303,7 @@ public class SmartCartVehicle {
         }
 
         Block block = getBlockBeneath();
-        //plugin.getLogger().info(block.getState().getData().toString());
         if (block.getState().getData().toString().contains("WOOL")) {
-            //Wool wool = (Wool) (org.bukkit.block.BlockState)block.getState();
             if (block.getState().getData().toString().contains("ORANGE")) {
                 setPreviousWoolColor(DyeColor.ORANGE);
                 setSpeed(SmartCart.config.getDouble("slow_cart_speed"));
@@ -321,8 +319,8 @@ public class SmartCartVehicle {
                         Sign sign = (Sign) blockOver.getState();
                         for (Pair<String, String> pair : parseSign(sign)) {
                             if (pair.left().equals("$EJT")) {
-                                if (pair.right().length() == 2) {
-                                    int dist = Integer.parseInt(pair.right().substring(1));
+                                if(pair.right().length() >= 2) {
+                                    int dist = Integer.parseInt(pair.right().substring(1, pair.right().length()));
                                     switch (pair.right().charAt(0)) {
                                         case 'N':
                                             passenger.teleport(passenger.getLocation().add(0, 0, -dist));
@@ -420,145 +418,142 @@ public class SmartCartVehicle {
     }
 
 
-        public String getPassengerName() {
-            if (getCart().getPassengers().isEmpty()) {
-                return "None";
+    public String getPassengerName() {
+        if (getCart().getPassengers().isEmpty()) {
+            return "None";
+        }
+        return getCart().getPassengers().get(0).getName();
+    }
+
+
+    // Returns the block directly ahead of the passenger
+    private Block getBlockAheadPassenger() {
+        // Get the passenger's direction as an integer
+        //   -1/3 = pos x
+        //   -2/2 = neg z
+        //   -3/1 = neg x
+        //   -4/0 = pos z
+        if(getCart().getPassengers().isEmpty()) return null;
+        int passengerDir = Math.round( getCart().getPassengers().get(0).getLocation().getYaw() / 90f );
+        Block block = null;
+        switch (passengerDir) {
+            case 0:
+            case -4:
+                block = getCart().getLocation().add(0,0,1).getBlock();
+                break;
+            case 1:
+            case -3:
+                block = getCart().getLocation().add(-1,0,0).getBlock();
+                break;
+            case 2:
+            case -2:
+                block = getCart().getLocation().add(0,0,-1).getBlock();
+                break;
+            case 3:
+            case -1:
+                block = getCart().getLocation().add(1,0,0).getBlock();
+                break;
+        }
+        return block;
+    }
+
+
+    // Find out if the cart is headed towards or away from the middle of the current block
+    private boolean isLeavingBlock() {
+
+        // Gotta check to make sure this exists first
+        if (getPreviousLocation() == null) {
+            return false;
+        }
+        // If we just moved to a new block, the previous location is invalid for this check
+        if (getPreviousLocation().getBlockX() != getLocation().getBlockX()
+                || getPreviousLocation().getBlockZ() != getLocation().getBlockZ()) {
+            // This lets you chain control blocks by setting the prev wool color to null unless we
+            // just got off an elevator.
+            if (Math.abs(getPreviousLocation().getBlockY() - getLocation().getBlockY()) < 2) {
+                setPreviousWoolColor(null);
             }
-            return getCart().getPassengers().get(0).getName();
+            return false;
         }
 
+        // Get the previous and current locations
+        double prevX = Math.abs( getPreviousLocation().getX() );
+        double prevZ = Math.abs( getPreviousLocation().getZ() );
+        double currX = Math.abs( getLocation().getX() );
+        double currZ = Math.abs( getLocation().getZ() );
 
-        // Returns the block directly ahead of the passenger
-        private Block getBlockAheadPassenger() {
-            // Get the passenger's direction as an integer
-            //   -1/3 = pos x
-            //   -2/2 = neg z
-            //   -3/1 = neg x
-            //   -4/0 = pos z
-            if(getCart().getPassengers().isEmpty()) return null;
-            int passengerDir = Math.round( getCart().getPassengers().get(0).getLocation().getYaw() / 90f );
-            Block block = null;
-            switch (passengerDir) {
-                case 0:
-                case -4:
-                    block = getCart().getLocation().add(0,0,1).getBlock();
-                    break;
-                case 1:
-                case -3:
-                    block = getCart().getLocation().add(-1,0,0).getBlock();
-                    break;
-                case 2:
-                case -2:
-                    block = getCart().getLocation().add(0,0,-1).getBlock();
-                    break;
-                case 3:
-                case -1:
-                    block = getCart().getLocation().add(1,0,0).getBlock();
-                    break;
-            }
-            return block;
-        }
+        // Just get the decimal part of the double
+        prevX = prevX - (int) prevX;
+        prevZ = prevZ - (int) prevZ;
+        currX = currX - (int) currX;
+        currZ = currZ - (int) currZ;
 
+        // Get distance from the middle of the block
+        double prevDistFromMidX = Math.abs( prevX - 0.5 );
+        double prevDistFromMidZ = Math.abs( prevZ - 0.5 );
+        double currDistFromMidX = Math.abs( currX - 0.5 );
+        double currDistFromMidZ = Math.abs( currZ - 0.5 );
 
-        // Find out if the cart is headed towards or away from the middle of the current block
-        private boolean isLeavingBlock() {
+        return currDistFromMidX > prevDistFromMidX || currDistFromMidZ > prevDistFromMidZ || (currDistFromMidX < 0.1 && currDistFromMidZ < 0.1);
+    }
 
-            // Gotta check to make sure this exists first
-            if (getPreviousLocation() == null) {
-                return false;
-            }
-            // If we just moved to a new block, the previous location is invalid for this check
-            if (getPreviousLocation().getBlockX() != getLocation().getBlockX()
-                    || getPreviousLocation().getBlockZ() != getLocation().getBlockZ()) {
-                // This lets you chain control blocks by setting the prev wool color to null unless we
-                // just got off an elevator.
-                if (Math.abs(getPreviousLocation().getBlockY() - getLocation().getBlockY()) < 2) {
-                    setPreviousWoolColor(null);
-                }
-                return false;
-            }
-
-            // Get the previous and current locations
-            double prevX = Math.abs( getPreviousLocation().getX() );
-            double prevZ = Math.abs( getPreviousLocation().getZ() );
-            double currX = Math.abs( getLocation().getX() );
-            double currZ = Math.abs( getLocation().getZ() );
-
-            // Just get the decimal part of the double
-            prevX = prevX - (int) prevX;
-            prevZ = prevZ - (int) prevZ;
-            currX = currX - (int) currX;
-            currZ = currZ - (int) currZ;
-
-            // Get distance from the middle of the block
-            double prevDistFromMidX = Math.abs( prevX - 0.5 );
-            double prevDistFromMidZ = Math.abs( prevZ - 0.5 );
-            double currDistFromMidX = Math.abs( currX - 0.5 );
-            double currDistFromMidZ = Math.abs( currZ - 0.5 );
-
-            return currDistFromMidX > prevDistFromMidX || currDistFromMidZ > prevDistFromMidZ || (currDistFromMidX < 0.1 && currDistFromMidZ < 0.1);
-        }
-
-        private void sendPassengerMessage(String message) {
-            message = "§6[SmartCart] " + message;
-            Entity entity = getPassenger();
-            if (entity instanceof Player) {
-                ((Player) entity).sendRawMessage(message);
-            }
-        }
-
-        private boolean isCommandMinecart() {
-            return getCart() instanceof CommandMinecart;
-        }
-
-        private boolean isExplosiveMinecart() {
-            return  getCart() instanceof ExplosiveMinecart;
-        }
-
-        private boolean isHopperMinecart() {
-            return getCart() instanceof HopperMinecart;
-        }
-
-        private boolean isPoweredMinecart() {
-            return getCart() instanceof PoweredMinecart;
-        }
-
-        //public boolean isRideableMinecart() {
-        //    return getCart() instanceof RideableMinecart;
-        //}
-
-        private boolean isSpawnerMinecart() {
-            return  getCart() instanceof SpawnerMinecart;
-        }
-
-        private boolean isStorageMinecart() {
-            return getCart() instanceof StorageMinecart;
-        }
-
-        private List<Pair<String, String>> parseSign(Sign sign){
-            for(String line : sign.getLines()){
-                plugin.getLogger().info(line);
-            }
-            List<Pair<String, String>> ret = new ArrayList<>();
-            StringBuilder stringBuilder = new StringBuilder();
-            for( String value : sign.getLines() ) { // Merge all the sign's lines
-                stringBuilder.append(value);
-            }
-            String text = stringBuilder.toString();
-            // Check to see if the sign string matches the control sign prefix; return otherwise
-            Pattern p = Pattern.compile(SmartCart.config.getString("control_sign_prefix_regex"));
-            Matcher m = p.matcher(text);
-            // Return if the control prefix isn't matched
-            if (!m.find()) return new ArrayList<>();
-            String signText = m.replaceAll(""); // Remove the control prefix
-            for(String pair : signText.split("\\|")) {
-                String[] tokens = pair.split(":");
-                tokens[0] = tokens[0].replaceAll("\\s+", "");
-                if(!tokens[0].contains("MSG")){
-                    tokens[1] = tokens[1].replaceAll("\\s+", "");
-                }
-                ret.add(new Pair<>(tokens[0], tokens[1]));
-            }
-            return ret;
+    private void sendPassengerMessage(String message) {
+        message = "§6[SmartCart] " + message;
+        Entity entity = getPassenger();
+        if (entity instanceof Player) {
+            ((Player) entity).sendRawMessage(message);
         }
     }
+
+    private boolean isCommandMinecart() {
+        return getCart() instanceof CommandMinecart;
+    }
+
+    private boolean isExplosiveMinecart() {
+        return  getCart() instanceof ExplosiveMinecart;
+    }
+
+    private boolean isHopperMinecart() {
+        return getCart() instanceof HopperMinecart;
+    }
+
+    private boolean isPoweredMinecart() {
+        return getCart() instanceof PoweredMinecart;
+    }
+
+    //public boolean isRideableMinecart() {
+    //    return getCart() instanceof RideableMinecart;
+    //}
+
+    private boolean isSpawnerMinecart() {
+        return  getCart() instanceof SpawnerMinecart;
+    }
+
+    private boolean isStorageMinecart() {
+        return getCart() instanceof StorageMinecart;
+    }
+
+    private List<Pair<String, String>> parseSign(Sign sign){
+        List<Pair<String, String>> ret = new ArrayList<>();
+        StringBuilder stringBuilder = new StringBuilder();
+        for( String value : sign.getLines() ) { // Merge all the sign's lines
+            stringBuilder.append(value);
+        }
+        String text = stringBuilder.toString();
+        // Check to see if the sign string matches the control sign prefix; return otherwise
+        Pattern p = Pattern.compile(SmartCart.config.getString("control_sign_prefix_regex"));
+        Matcher m = p.matcher(text);
+        // Return if the control prefix isn't matched
+        if (!m.find()) return new ArrayList<>();
+        String signText = m.replaceAll(""); // Remove the control prefix
+        for(String pair : signText.split("\\|")) {
+            String[] tokens = pair.split(":");
+            tokens[0] = tokens[0].replaceAll("\\s+", "");
+            if(!tokens[0].contains("MSG")){
+                tokens[1] = tokens[1].replaceAll("\\s+", "");
+            }
+            ret.add(new Pair<>(tokens[0], tokens[1]));
+        }
+        return ret;
+    }
+}
