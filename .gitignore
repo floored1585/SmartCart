@@ -13,3 +13,4 @@ ops.json
 spigot.yml
 /logs/*
 /plugins/*
+/worlds/*
