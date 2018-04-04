@@ -23,7 +23,6 @@ public class SmartCartUtil {
     private ArrayList<SmartCartVehicle> cartList = new ArrayList<>();
     private SmartCart plugin;
 
-
     SmartCartUtil(SmartCart plugin) {
         this.plugin = plugin;
     }
@@ -67,7 +66,7 @@ public class SmartCartUtil {
         }
 
         // If the cart doesn't already exist as a SmartCartVehicle, create it
-        SmartCartVehicle newCart = new SmartCartVehicle(plugin, requestedCart);
+        SmartCartVehicle newCart = new SmartCartVehicle(requestedCart);
         cartList.add(newCart);
         return newCart;
     }

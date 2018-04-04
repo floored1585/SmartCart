@@ -6,6 +6,7 @@
 //
 package net.f85.smartcart;
 
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Entity;
@@ -19,6 +20,8 @@ import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.block.Block;
 import org.bukkit.Material;
+import org.bukkit.util.Vector;
+
 import java.util.ArrayList;
 
 public class SmartCartListener implements Listener {
@@ -158,11 +161,44 @@ public class SmartCartListener implements Listener {
         for (Entity entity : cart.getNearbyEntities(r, r, r)) {
             if (entity instanceof Player && cart.getPassengers().isEmpty() && entity.getVehicle() == null) {
                 cart.addPassenger(entity);
-                SmartCart.util.sendMessage(entity, "Move in the direction you wish to go.");
+                Block block1 = cart.getLocation().add(0, -2, 0).getBlock();
+                if (block1.getType() == Material.SIGN || block1.getType() == Material.SIGN_POST || block1.getType() == Material.WALL_SIGN) {
+                    Sign sign = (Sign) block1.getState();
+                    if(cart.getVelocity().getX() == 0 && cart.getVelocity().getZ() == 0) {
+                        for (Pair<String, String> pair : SmartCartVehicle.parseSign(sign)) {
+                            if (pair.left().equals("$LNC"))
+                                switch (pair.right()) {
+                                    case "N":
+                                        if(SmartCart.util.isRail(cart.getLocation().add(0, 0, -1).getBlock())) {
+                                            cart.teleport(cart.getLocation().add(0, 0, -1));
+                                            cart.setVelocity(new Vector(0, 0, -1));
+                                        }
+                                        break;
+                                    case "E":
+                                        if(SmartCart.util.isRail(cart.getLocation().add(1, 0, 0).getBlock())) {
+                                            cart.teleport(cart.getLocation().add(1, 0, 0));
+                                            cart.setVelocity(new Vector(1, 0, 0));
+                                        }
+                                        break;
+                                    case "W":
+                                        if(SmartCart.util.isRail(cart.getLocation().add(-1, 0, 0).getBlock())) {
+                                            cart.teleport(cart.getLocation().add(-1, 0, 0));
+                                            cart.setVelocity(new Vector(-1, 0, 0));
+                                        }
+                                        break;
+                                    case "S":
+                                        if(SmartCart.util.isRail(cart.getLocation().add(0, 0, 1).getBlock())) {
+                                            cart.teleport(cart.getLocation().add(0, 0, 1));
+                                            cart.setVelocity(new Vector(0, 0, 1));
+                                        }
+                                        break;
+                                }
+                        }
+                    }
+                }
+                else SmartCart.util.sendMessage(entity, "Move in the direction you wish to go.");
                 break;
             }
         }
     }
-
-
 }

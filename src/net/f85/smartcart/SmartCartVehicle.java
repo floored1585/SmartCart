@@ -36,16 +36,16 @@ public class SmartCartVehicle {
     private Location previousLocation;
     private int[] currentRoughLocation;
     private int[] previousRoughLocation;
-    private SmartCart plugin;
+    //private SmartCart plugin;
     //private String signText;
     private int emptyCartTimer = 0;
     // Settables
     private double configSpeed = SmartCart.config.getDouble("normal_cart_speed");
     private String configEndpoint = "";
 
-
-    SmartCartVehicle(SmartCart plugin, Minecart vehicle) {
-        this.plugin = plugin;
+    SmartCartVehicle(Minecart vehicle){
+        //SmartCartVehicle(SmartCart plugin, Minecart vehicle) {
+        //this.plugin = plugin;
         cart = vehicle;
         cart.setMaxSpeed(SmartCart.config.getDouble("max_cart_speed"));
     }
@@ -154,75 +154,70 @@ public class SmartCartVehicle {
     public void readControlSign() {
         Block block = getCart().getLocation().add(0D, -2D, 0D).getBlock();
         // Return if we're not over a sign
-        if (block.getType() != Material.WALL_SIGN && block.getType() != Material.SIGN_POST) {
-            return;
-        }
-        // Return if we're not on rails
-        if (isNotOnRail()) {
-            return;
-        }
-        boolean foundEndpoint = false;
-        Sign sign = (Sign) block.getState(); // Cast to Sign
-        for(Pair<String, String> pair : parseSign(sign)){
-            Pattern p;
-            if(pair.left().equals("$SPD")) {
-                p = Pattern.compile("^\\d*\\.?\\d+");
-                Double minSpeed = 0D;
-                Double maxSpeed = SmartCart.config.getDouble("max_cart_speed");
-                if(!p.matcher(pair.right()).find() || Double.parseDouble(pair.right()) > maxSpeed || Double.parseDouble(pair.right()) < minSpeed) {
-                    sendPassengerMessage("Bad speed value: \"" + pair.right() + "\". Must be a numeric value (decimals OK) between "
-                            + minSpeed + " and " + maxSpeed + ".");
-                    continue;
-                }
-                configSpeed = Double.parseDouble(pair.right());
+        if (block.getType() == Material.SIGN || block.getType() == Material.SIGN_POST || block.getType() == Material.WALL_SIGN) {
+            // Return if we're not on rails
+            if (isNotOnRail()) {
+                return;
             }
-            else if(pair.left().equals("$MSG")) {
-                sendPassengerMessage(pair.right());
-            }
-            else if(pair.left().equals("$END")) {
-                configEndpoint = pair.right();
-                sendPassengerMessage("Endpoint set to " + pair.right());
-            }
-            else if(pair.left().equals("$TAG")){
-                configEndpoint = pair.right();
-                sendPassengerMessage("Set tag to " + pair.right());
-            }
-            else if(pair.left().equals(configEndpoint) || pair.left().equals("$DEF")) {
-                // Skip this if we already found and used the endpoint
-                Entity passenger = null;
-                if(!cart.getPassengers().isEmpty()) {
-                    passenger = cart.getPassengers().get(0);
-                }
-                if(foundEndpoint || passenger == null) {
-                    continue;
-                }
-                foundEndpoint = true;
-                Block blockAhead = null;
-                Vector vector = new Vector(0, 0, 0);
-                switch(pair.right()){
-                    case "N":
-                        blockAhead = cart.getLocation().add(0D,0D,-1D).getBlock();
-                        vector = new Vector(0,0,-1);
-                        break;
-                    case "S":
-                        blockAhead = cart.getLocation().add(0D,0D,1D).getBlock();
-                        vector = new Vector(0,0,1);
-                        break;
-                    case "E":
-                        blockAhead = cart.getLocation().add(1D,0D,0D).getBlock();
-                        vector = new Vector(1,0,0);
-                        break;
-                    case "W":
-                        blockAhead = cart.getLocation().add(-1D,0D,0D).getBlock();
-                        vector = new Vector(-1,0,0);
-                        break;
-                }
-                if (SmartCart.util.isRail(blockAhead)) {
-                    remove(true);
-                    SmartCartVehicle newSC = SmartCart.util.spawnCart(blockAhead);
-                    newSC.getCart().addPassenger(passenger);
-                    newSC.getCart().setVelocity(vector);
-                    transferSettings(newSC);
+            boolean foundEndpoint = false;
+            Sign sign = (Sign) block.getState(); // Cast to Sign
+            for(Pair<String, String> pair : parseSign(sign)) {
+                Pattern p;
+                if (pair.left().equals("$SPD")) {
+                    p = Pattern.compile("^\\d*\\.?\\d+");
+                    Double minSpeed = 0D;
+                    Double maxSpeed = SmartCart.config.getDouble("max_cart_speed");
+                    if (!p.matcher(pair.right()).find() || Double.parseDouble(pair.right()) > maxSpeed || Double.parseDouble(pair.right()) < minSpeed) {
+                        sendPassengerMessage("Bad speed value: \"" + pair.right() + "\". Must be a numeric value (decimals OK) between "
+                                + minSpeed + " and " + maxSpeed + ".");
+                        continue;
+                    }
+                    configSpeed = Double.parseDouble(pair.right());
+                } else if (pair.left().equals("$MSG")) {
+                    sendPassengerMessage(pair.right(), false);
+                } else if (pair.left().equals("$END")) {
+                    configEndpoint = pair.right();
+                    sendPassengerMessage("Endpoint set to §a" + pair.right());
+                } else if (pair.left().equals("$TAG")) {
+                    configEndpoint = pair.right();
+                    sendPassengerMessage("Set tag to §a" + pair.right());
+                } else if (pair.left().equals(configEndpoint) || pair.left().equals("$DEF")) {
+                    // Skip this if we already found and used the endpoint
+                    Entity passenger = null;
+                    if (!cart.getPassengers().isEmpty()) {
+                        passenger = cart.getPassengers().get(0);
+                    }
+                    if (foundEndpoint || passenger == null) {
+                        continue;
+                    }
+                    foundEndpoint = true;
+                    Block blockAhead = null;
+                    Vector vector = new Vector(0, 0, 0);
+                    switch (pair.right()) {
+                        case "N":
+                            blockAhead = cart.getLocation().add(0D, 0D, -1D).getBlock();
+                            vector = new Vector(0, 0, -1);
+                            break;
+                        case "S":
+                            blockAhead = cart.getLocation().add(0D, 0D, 1D).getBlock();
+                            vector = new Vector(0, 0, 1);
+                            break;
+                        case "E":
+                            blockAhead = cart.getLocation().add(1D, 0D, 0D).getBlock();
+                            vector = new Vector(1, 0, 0);
+                            break;
+                        case "W":
+                            blockAhead = cart.getLocation().add(-1D, 0D, 0D).getBlock();
+                            vector = new Vector(-1, 0, 0);
+                            break;
+                    }
+                    if (SmartCart.util.isRail(blockAhead)) {
+                        remove(true);
+                        SmartCartVehicle newSC = SmartCart.util.spawnCart(blockAhead);
+                        newSC.getCart().addPassenger(passenger);
+                        newSC.getCart().setVelocity(vector);
+                        transferSettings(newSC);
+                    }
                 }
             }
         }
@@ -318,29 +313,27 @@ public class SmartCartVehicle {
                     if (blockOver.getType() == Material.SIGN || blockOver.getType() == Material.SIGN_POST || blockOver.getType() == Material.WALL_SIGN) {
                         Sign sign = (Sign) blockOver.getState();
                         for (Pair<String, String> pair : parseSign(sign)) {
-                            if (pair.left().equals("$EJT")) {
-                                if(pair.right().length() >= 2) {
-                                    int dist = Integer.parseInt(pair.right().substring(1, pair.right().length()));
-                                    switch (pair.right().charAt(0)) {
-                                        case 'N':
-                                            passenger.teleport(passenger.getLocation().add(0, 0, -dist));
-                                            break;
-                                        case 'E':
-                                            passenger.teleport(passenger.getLocation().add(dist, 0, 0));
-                                            break;
-                                        case 'S':
-                                            passenger.teleport(passenger.getLocation().add(0, 0, dist));
-                                            break;
-                                        case 'W':
-                                            passenger.teleport(passenger.getLocation().add(-dist, 0, 0));
-                                            break;
-                                        case 'U':
-                                            passenger.teleport(passenger.getLocation().add(0, dist, 0));
-                                            break;
-                                        case 'D':
-                                            passenger.teleport(passenger.getLocation().add(0, -dist, 0));
-                                            break;
-                                    }
+                            if (pair.left().equals("$EJT") && pair.right().length() >= 2) {
+                                int dist = Integer.parseInt(pair.right().substring(1, pair.right().length()));
+                                switch (pair.right().charAt(0)) {
+                                    case 'N':
+                                        passenger.teleport(passenger.getLocation().add(0, 0, -dist));
+                                        break;
+                                    case 'E':
+                                        passenger.teleport(passenger.getLocation().add(dist, 0, 0));
+                                        break;
+                                    case 'S':
+                                        passenger.teleport(passenger.getLocation().add(0, 0, dist));
+                                        break;
+                                    case 'W':
+                                        passenger.teleport(passenger.getLocation().add(-dist, 0, 0));
+                                        break;
+                                    case 'U':
+                                        passenger.teleport(passenger.getLocation().add(0, dist, 0));
+                                        break;
+                                    case 'D':
+                                        passenger.teleport(passenger.getLocation().add(0, -dist, 0));
+                                        break;
                                 }
                             }
                         }
@@ -457,7 +450,6 @@ public class SmartCartVehicle {
         return block;
     }
 
-
     // Find out if the cart is headed towards or away from the middle of the current block
     private boolean isLeavingBlock() {
 
@@ -498,10 +490,19 @@ public class SmartCartVehicle {
     }
 
     private void sendPassengerMessage(String message) {
-        message = "§6[SmartCart] " + message;
+        message = "§6[SmartCart] §7" + message;
         Entity entity = getPassenger();
         if (entity instanceof Player) {
             ((Player) entity).sendRawMessage(message);
+        }
+    }
+
+    private void sendPassengerMessage(String message, boolean prefix){
+        if(prefix) message = "§6[SmartCart] §7" + message;
+        else message = "§7" + message;
+        Entity entity = getPassenger();
+        if(entity instanceof Player){
+            ((Player)entity).sendRawMessage(message);
         }
     }
 
@@ -533,7 +534,7 @@ public class SmartCartVehicle {
         return getCart() instanceof StorageMinecart;
     }
 
-    private List<Pair<String, String>> parseSign(Sign sign){
+    public static List<Pair<String, String>> parseSign(Sign sign){
         List<Pair<String, String>> ret = new ArrayList<>();
         StringBuilder stringBuilder = new StringBuilder();
         for( String value : sign.getLines() ) { // Merge all the sign's lines
