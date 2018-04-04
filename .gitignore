@@ -13,4 +13,6 @@ ops.json
 spigot.yml
 /logs/*
 /plugins/*
-/worlds/*
+/world/*
+/world_nether/*
+/world_the_end/*
