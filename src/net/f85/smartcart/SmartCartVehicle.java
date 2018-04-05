@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SmartCartVehicle {
+public class SmartCartVehicle{
 
     private Minecart cart;
     private DyeColor previousWoolColor;
@@ -41,7 +41,7 @@ public class SmartCartVehicle {
     private int emptyCartTimer = 0;
     // Settables
     private double configSpeed = SmartCart.config.getDouble("normal_cart_speed");
-    private String configEndpoint = "";
+    public String configEndpoint = "";
 
     SmartCartVehicle(Minecart vehicle){
         //SmartCartVehicle(SmartCart plugin, Minecart vehicle) {

@@ -30,7 +30,7 @@ public class SmartCartListener implements Listener {
     private SmartCart plugin;
 
 
-    public SmartCartListener(SmartCart plugin) {
+    SmartCartListener(SmartCart plugin) {
         this.plugin = plugin;
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }

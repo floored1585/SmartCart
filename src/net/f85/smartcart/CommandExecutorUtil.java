@@ -33,9 +33,7 @@ public class CommandExecutorUtil implements CommandExecutor {
         String badWorld = "The world you specified does not exist.  Valid worlds are: "
                 + SmartCart.util.getWorldList(", ");
 
-        if (!cmd.getName().equalsIgnoreCase("sc")) {
-            return false;
-        }
+        if (!cmd.getName().equalsIgnoreCase("sc")) return false;
         if (!(sender instanceof Player)) {
             sender.sendMessage("SmartCart console control not yet implemented :(");
             return true;
@@ -76,7 +74,7 @@ public class CommandExecutorUtil implements CommandExecutor {
                     // If argSize is 2, we have the right # of arguments, so check to make sure ID is an
                     //   int and the ID references a known cart, then kill it with fire.
                     else{
-                        if (!SmartCart.util.isInteger(args[1])) {
+                        if (!SmartCartUtil.isInteger(args[1])) {
                             SmartCart.util.sendMessage((Entity) sender, "Error: Cart ID must be an integer!");
                             return true;
                         }

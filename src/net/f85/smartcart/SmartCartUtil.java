@@ -34,11 +34,6 @@ public class SmartCartUtil {
     }
 
 
-    //public int CartListSize() {
-    //    return cartList.size();
-    //}
-
-
     // This returns an ArrayList of all carts in the provided world
     public ArrayList<SmartCartVehicle> getCartList(World world) {
 
