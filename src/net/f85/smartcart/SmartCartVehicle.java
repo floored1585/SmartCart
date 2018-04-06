@@ -176,10 +176,10 @@ public class SmartCartVehicle{
                 } else if (pair.left().equals("$MSG")) {
                     sendPassengerMessage(pair.right(), false);
                 } else if (pair.left().equals("$END")) {
-                    configEndpoint = pair.right();
+                    this.configEndpoint = pair.right();
                     sendPassengerMessage("Endpoint set to §a" + pair.right());
                 } else if (pair.left().equals("$TAG")) {
-                    configEndpoint = pair.right();
+                    this.configEndpoint = pair.right();
                     sendPassengerMessage("Set tag to §a" + pair.right());
                 } else if (pair.left().equals(configEndpoint) || pair.left().equals("$DEF")) {
                     // Skip this if we already found and used the endpoint
