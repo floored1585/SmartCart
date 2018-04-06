@@ -9,12 +9,15 @@ package net.f85.smartcart;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.util.logging.Logger;
+
 public class SmartCart extends JavaPlugin {
 
 
     private static SmartCartListener listener;
     public static SmartCartUtil util;
     public static FileConfiguration config;
+    public static Logger logger;
 
 
     @Override
@@ -29,6 +32,7 @@ public class SmartCart extends JavaPlugin {
 
         listener = new SmartCartListener(this);
         util = new SmartCartUtil(this);
+        logger = getLogger();
 
         // Set up command executor
         //commandExecutor = new CommandExecutorUtil(this);

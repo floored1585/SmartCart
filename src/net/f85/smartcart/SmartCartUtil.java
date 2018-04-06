@@ -294,5 +294,8 @@ public class SmartCartUtil {
         return null;
     }
 
-
+    public boolean isSign(Block block){
+        if(block.getType() == Material.SIGN || block.getType() == Material.SIGN_POST || block.getType() == Material.WALL_SIGN) return true;
+        else return false;
+    }
 }

@@ -30,6 +30,7 @@ public class SmartCartListener implements Listener {
     private SmartCart plugin;
 
 
+
     SmartCartListener(SmartCart plugin) {
         this.plugin = plugin;
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -169,30 +170,40 @@ public class SmartCartListener implements Listener {
                             if (pair.left().equals("$LNC"))
                                 switch (pair.right()) {
                                     case "N":
-                                        if(SmartCart.util.isRail(cart.getLocation().add(0, 0, -1).getBlock())) {
+                                        if (SmartCart.util.isRail(cart.getLocation().add(0, 0, -1).getBlock())) {
                                             cart.teleport(cart.getLocation().add(0, 0, -1));
                                             cart.setVelocity(new Vector(0, 0, -1));
                                         }
                                         break;
                                     case "E":
-                                        if(SmartCart.util.isRail(cart.getLocation().add(1, 0, 0).getBlock())) {
+                                        if (SmartCart.util.isRail(cart.getLocation().add(1, 0, 0).getBlock())) {
                                             cart.teleport(cart.getLocation().add(1, 0, 0));
                                             cart.setVelocity(new Vector(1, 0, 0));
                                         }
                                         break;
                                     case "W":
-                                        if(SmartCart.util.isRail(cart.getLocation().add(-1, 0, 0).getBlock())) {
+                                        if (SmartCart.util.isRail(cart.getLocation().add(-1, 0, 0).getBlock())) {
                                             cart.teleport(cart.getLocation().add(-1, 0, 0));
                                             cart.setVelocity(new Vector(-1, 0, 0));
                                         }
                                         break;
                                     case "S":
-                                        if(SmartCart.util.isRail(cart.getLocation().add(0, 0, 1).getBlock())) {
+                                        if (SmartCart.util.isRail(cart.getLocation().add(0, 0, 1).getBlock())) {
                                             cart.teleport(cart.getLocation().add(0, 0, 1));
                                             cart.setVelocity(new Vector(0, 0, 1));
                                         }
                                         break;
                                 }
+                            if(pair.left().equals("$END")){
+                                SmartCartVehicle smartCart = SmartCart.util.getCartFromList(cart);
+                                smartCart.configEndpoint = pair.right();
+                                ((Player)cart.getPassengers().get(0)).sendRawMessage("§6[Smart Cart] §7Endpoint set to §a" + pair.right());
+                            }
+                            if(pair.left().equals("$TAG")){
+                                SmartCartVehicle smartCart = SmartCart.util.getCartFromList(cart);
+                                smartCart.configEndpoint = pair.right();
+                                ((Player)cart.getPassengers().get(0)).sendRawMessage("§6[Smart Cart] §7Set tag to §a" + pair.right());
+                            }
                         }
                     }
                 }

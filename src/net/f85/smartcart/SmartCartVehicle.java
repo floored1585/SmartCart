@@ -154,8 +154,7 @@ public class SmartCartVehicle{
     public void readControlSign() {
         Block block = getCart().getLocation().add(0D, -2D, 0D).getBlock();
         // Return if we're not over a sign
-        if (block.getType() == Material.SIGN || block.getType() == Material.SIGN_POST || block.getType() == Material.WALL_SIGN) {
-            // Return if we're not on rails
+        if (SmartCart.util.isSign(block)) {
             if (isNotOnRail()) {
                 return;
             }
@@ -169,19 +168,27 @@ public class SmartCartVehicle{
                     Double maxSpeed = SmartCart.config.getDouble("max_cart_speed");
                     if (!p.matcher(pair.right()).find() || Double.parseDouble(pair.right()) > maxSpeed || Double.parseDouble(pair.right()) < minSpeed) {
                         sendPassengerMessage("Bad speed value: \"" + pair.right() + "\". Must be a numeric value (decimals OK) between "
-                                + minSpeed + " and " + maxSpeed + ".");
+                                + minSpeed + " and " + maxSpeed + ".", true);
                         continue;
                     }
                     configSpeed = Double.parseDouble(pair.right());
-                } else if (pair.left().equals("$MSG")) {
+                }
+                if (pair.left().equals("$MSG")) {
                     sendPassengerMessage(pair.right(), false);
-                } else if (pair.left().equals("$END")) {
-                    this.configEndpoint = pair.right();
-                    sendPassengerMessage("Endpoint set to §a" + pair.right());
-                } else if (pair.left().equals("$TAG")) {
-                    this.configEndpoint = pair.right();
-                    sendPassengerMessage("Set tag to §a" + pair.right());
-                } else if (pair.left().equals(configEndpoint) || pair.left().equals("$DEF")) {
+                }
+                if (pair.left().equals("$END")) {
+                    SmartCart.logger.info("found an endpoint sign");
+                    configEndpoint = pair.right();
+                    sendPassengerMessage("Endpoint set to §a" + pair.right(), true);
+                    SmartCart.logger.info("set endpoint for minecart" + cart.getEntityId() + " to " + pair.right());
+                }
+                if (pair.left().equals("$TAG")) {
+                    SmartCart.logger.info("found a tag sign");
+                    configEndpoint = pair.right();
+                    sendPassengerMessage("Set tag to §a" + pair.right(), true);
+                    SmartCart.logger.info("set tag for minecart" + cart.getEntityId() + " to " + pair.right());
+                }
+                if (pair.left().equals(configEndpoint) || pair.left().equals("$DEF")) {
                     // Skip this if we already found and used the endpoint
                     Entity passenger = null;
                     if (!cart.getPassengers().isEmpty()) {
@@ -213,7 +220,7 @@ public class SmartCartVehicle{
                     }
                     if (SmartCart.util.isRail(blockAhead)) {
                         remove(true);
-                        SmartCartVehicle newSC = SmartCart.util.spawnCart(blockAhead);
+                            SmartCartVehicle newSC = SmartCart.util.spawnCart(blockAhead);
                         newSC.getCart().addPassenger(passenger);
                         newSC.getCart().setVelocity(vector);
                         transferSettings(newSC);
@@ -310,7 +317,7 @@ public class SmartCartVehicle{
                     remove(true);
                     //add code for checking for $EJT signs
                     Block blockOver = getCart().getLocation().add(0, -2, 0).getBlock();
-                    if (blockOver.getType() == Material.SIGN || blockOver.getType() == Material.SIGN_POST || blockOver.getType() == Material.WALL_SIGN) {
+                    if (SmartCart.util.isSign(blockOver)) {
                         Sign sign = (Sign) blockOver.getState();
                         for (Pair<String, String> pair : parseSign(sign)) {
                             if (pair.left().equals("$EJT") && pair.right().length() >= 2) {
@@ -362,7 +369,7 @@ public class SmartCartVehicle{
                 if (isLeavingBlock()) {
                     setPreviousWoolColor(DyeColor.GREEN);
                     setSpeed(0D);
-                    sendPassengerMessage("Move in the direction you wish to go.");
+                    sendPassengerMessage("Move in the direction you wish to go.", true);
                 } else {
                     // Otherwise, slow the cart down
                     setSpeed(0.1D);
@@ -487,14 +494,6 @@ public class SmartCartVehicle{
         double currDistFromMidZ = Math.abs( currZ - 0.5 );
 
         return currDistFromMidX > prevDistFromMidX || currDistFromMidZ > prevDistFromMidZ || (currDistFromMidX < 0.1 && currDistFromMidZ < 0.1);
-    }
-
-    private void sendPassengerMessage(String message) {
-        message = "§6[SmartCart] §7" + message;
-        Entity entity = getPassenger();
-        if (entity instanceof Player) {
-            ((Player) entity).sendRawMessage(message);
-        }
     }
 
     private void sendPassengerMessage(String message, boolean prefix){

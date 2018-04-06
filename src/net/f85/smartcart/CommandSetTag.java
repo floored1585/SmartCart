@@ -30,7 +30,7 @@ public class CommandSetTag implements CommandExecutor{
         }
         SmartCartVehicle cart = SmartCart.util.getCartFromList((Minecart)((Player)sender).getVehicle());
         cart.configEndpoint = args[0];
-        ((Player) sender).sendRawMessage("§7[Smart Cart] §6Set tag to §a" + args[0]);
+        ((Player) sender).sendRawMessage("§6[Smart Cart] §7Set tag to §a" + args[0]);
         return true;
     }
 }
