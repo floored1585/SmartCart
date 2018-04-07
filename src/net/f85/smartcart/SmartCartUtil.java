@@ -18,7 +18,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SmartCartUtil {
+class SmartCartUtil {
 
     private ArrayList<SmartCartVehicle> cartList = new ArrayList<>();
     private SmartCart plugin;
@@ -29,13 +29,13 @@ public class SmartCartUtil {
 
 
     // Accessors!
-    public ArrayList<SmartCartVehicle> getCartList() {
+    ArrayList<SmartCartVehicle> getCartList() {
         return new ArrayList<>(cartList);
     }
 
 
     // This returns an ArrayList of all carts in the provided world
-    public ArrayList<SmartCartVehicle> getCartList(World world) {
+    ArrayList<SmartCartVehicle> getCartList(World world) {
 
         // This is where the carts we find, if any, will go
         ArrayList<SmartCartVehicle> worldCarts = new ArrayList<>();
@@ -51,7 +51,7 @@ public class SmartCartUtil {
     }
 
 
-    public SmartCartVehicle getCartFromList(Minecart requestedCart) {
+    SmartCartVehicle getCartFromList(Minecart requestedCart) {
 
         // Search for an existing SmartCartVehicle first
         for (SmartCartVehicle cart : cartList) {
@@ -66,7 +66,7 @@ public class SmartCartUtil {
         return newCart;
     }
 
-    public SmartCartVehicle getCartFromList(int entityID) {
+    SmartCartVehicle getCartFromList(int entityID) {
         // Search for an existing SmartCartVehicle first
         for (SmartCartVehicle cart : cartList) {
             if (cart.getEntityId() == entityID) {
@@ -78,7 +78,7 @@ public class SmartCartUtil {
 
 
     // Find & remove the cart from cartList
-    public void removeCart(SmartCartVehicle deadCart) {
+    void removeCart(SmartCartVehicle deadCart) {
         // Find the cart that is being removed
         for (SmartCartVehicle cart : cartList) {
             if (cart.getEntityId() == deadCart.getEntityId()) {
@@ -88,14 +88,14 @@ public class SmartCartUtil {
         }
     }
 
-    public void killCarts(ArrayList<SmartCartVehicle> removeCartList) {
+    void killCarts(ArrayList<SmartCartVehicle> removeCartList) {
         for (SmartCartVehicle cart : removeCartList) {
             cart.remove(true);
         }
     }
 
 
-    public boolean isControlBlock(Block block) {
+    boolean isControlBlock(Block block) {
         Block blockAbove = block.getLocation().add(0,1,0).getBlock();
         return (block.getType() == Material.WOOL && blockAbove.getType() == Material.RAILS);
     }
@@ -106,7 +106,7 @@ public class SmartCartUtil {
     }
 
 
-    public boolean isSpawnBlock(Block block) {
+    boolean isSpawnBlock(Block block) {
         return isControlBlock(block) && (block.getState().getData().toString().contains("WOOL") && block.getState().getData().toString().contains("BLACK"));
     }
 
@@ -114,7 +114,7 @@ public class SmartCartUtil {
     // This searches methodically through a cube with a side length of (radius * 2 + 1)
     //   for the material passed.  Returns an ArrayList of Blocks containing all matching
     //   material found
-    public ArrayList<Block> getBlocksNearby(Block centerBlock, int radius, Material material) {
+    ArrayList<Block> getBlocksNearby(Block centerBlock, int radius, Material material) {
 
         ArrayList<Block> blockList = new ArrayList<>();
 
@@ -133,7 +133,7 @@ public class SmartCartUtil {
 
 
     // Send a message to the player
-    public void sendMessage(Entity entity, String message) {
+    void sendMessage(Entity entity, String message) {
         message = "§6[SmartCart] §7" + message;
         if (entity instanceof Player) {
             ((Player) entity).sendRawMessage(message);
@@ -142,7 +142,7 @@ public class SmartCartUtil {
 
 
     // This method returns a delineated list of the worlds on the server
-    public String getWorldList(String separator) {
+    String getWorldList(String separator) {
 
         List<World> worldList = Bukkit.getWorlds();
         StringBuilder stringBuilder = new StringBuilder();
@@ -161,7 +161,7 @@ public class SmartCartUtil {
 
 
     // Send the provided list of carts to the provided entity
-    public void sendCartList(ArrayList<SmartCartVehicle> sendCartList, Entity entity) {
+    void sendCartList(ArrayList<SmartCartVehicle> sendCartList, Entity entity) {
 
         // These values are used to format the columns
         int padID = 7;
@@ -179,7 +179,7 @@ public class SmartCartUtil {
                 + "\n";
         StringBuilder stringBuilder = new StringBuilder();
         for (SmartCartVehicle cart : sendCartList) {
-            stringBuilder.append("").
+            stringBuilder.
                     append(padRight(Integer.toString(cart.getEntityId()), padID)).
                     append(padRight(cart.getLocation().getWorld().getName(), padWorld)).
                     append(padRight(getLocationString(cart.getLocation()), padLocation)).
@@ -217,7 +217,7 @@ public class SmartCartUtil {
     }
 
 
-    public boolean isRail(Block block) {
+    boolean isRail(Block block) {
         return block != null && block.getType() == Material.RAILS;
     }
 
@@ -228,7 +228,7 @@ public class SmartCartUtil {
 
 
     // Checks to see if a string is really an integer!
-    public static boolean isInteger(String str) {
+    static boolean isInteger(String str) {
         if (str == null) {
             return false;
         }
@@ -268,7 +268,7 @@ public class SmartCartUtil {
     }
 
 
-    public SmartCartVehicle spawnCart(Block block) {
+    SmartCartVehicle spawnCart(Block block) {
         // Check to make sure the block is a rail and no cart already exists here
         Minecart cartAtBlock = getCartAtBlock(block);
         if ( isRail(block) && cartAtBlock == null ) {
@@ -280,7 +280,7 @@ public class SmartCartUtil {
     }
 
 
-    public Block getElevatorBlock(Location loc) {
+    Block getElevatorBlock(Location loc) {
         Location cmdLoc = loc.clone();
         for (int y = 0; y < 256; y++) {
             if (y == cmdLoc.getBlockY()) {
@@ -294,8 +294,7 @@ public class SmartCartUtil {
         return null;
     }
 
-    public boolean isSign(Block block){
-        if(block.getType() == Material.SIGN || block.getType() == Material.SIGN_POST || block.getType() == Material.WALL_SIGN) return true;
-        else return false;
+    boolean isSign(Block block){
+        return block.getType() == Material.SIGN || block.getType() == Material.SIGN_POST || block.getType() == Material.WALL_SIGN;
     }
 }

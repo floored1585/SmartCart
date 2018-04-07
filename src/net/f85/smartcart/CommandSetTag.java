@@ -10,7 +10,7 @@ public class CommandSetTag implements CommandExecutor{
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
-        String help = "Usage: /scSetTag <Tag> -- sets tag of current cart to Tag";
+        String help = "§6[Smart Cart] §cUsage: /scSetTag <Tag> -- sets tag of current cart to Tag";
         //if(!cmd.getName().equalsIgnoreCase("scsettag")) return false;
         if(!(sender instanceof Player)) {
             sender.sendMessage("Consoles can't be in vehicles");
@@ -25,7 +25,7 @@ public class CommandSetTag implements CommandExecutor{
             return true;
         }
         if(!(((Player)sender).getVehicle() instanceof Minecart)){
-            ((Player) sender).sendRawMessage("Non minecart vehicles aren't supported\n" + help);
+            ((Player) sender).sendRawMessage("§6[Smart Cart] §cNon minecart vehicles aren't supported\n" + help);
             return true;
         }
         SmartCartVehicle cart = SmartCart.util.getCartFromList((Minecart)((Player)sender).getVehicle());

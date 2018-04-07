@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SmartCartVehicle{
+class SmartCartVehicle{
 
     private Minecart cart;
     private DyeColor previousWoolColor;
@@ -41,7 +41,7 @@ public class SmartCartVehicle{
     private int emptyCartTimer = 0;
     // Settables
     private double configSpeed = SmartCart.config.getDouble("normal_cart_speed");
-    public String configEndpoint = "";
+    String configEndpoint = "";
 
     SmartCartVehicle(Minecart vehicle){
         //SmartCartVehicle(SmartCart plugin, Minecart vehicle) {
@@ -52,7 +52,7 @@ public class SmartCartVehicle{
 
 
     // Accessors
-    public Minecart getCart() {
+    Minecart getCart() {
         return cart;
     }
     private Location getPreviousLocation() {
@@ -61,7 +61,7 @@ public class SmartCartVehicle{
     private DyeColor getPreviousWoolColor() {
         return previousWoolColor;
     }
-    public Double getConfigSpeed() {
+    double getConfigSpeed() {
         return configSpeed;
     }
     private void setConfigSpeed(Double speed) {
@@ -76,10 +76,10 @@ public class SmartCartVehicle{
     //public String getSignText() {
     //    return signText;
     //}
-    public void setPreviousWoolColor(DyeColor color) {
+    void setPreviousWoolColor(DyeColor color) {
         previousWoolColor = color;
     }
-    public void saveCurrentLocation() {
+    void saveCurrentLocation() {
         previousLocation = currentLocation;
         currentLocation = getLocation();
         previousRoughLocation = currentRoughLocation;
@@ -90,23 +90,23 @@ public class SmartCartVehicle{
 
 
     // These methods just pass through to the Minecart class
-    public int getEntityId() {
+    int getEntityId() {
         return getCart().getEntityId();
     }
     private Entity getPassenger() {
         return getCart().getPassengers().isEmpty() ? null : getCart().getPassengers().get(0);
     }
-    public Location getLocation() {
+    Location getLocation() {
         return getCart().getLocation();
     }
 
 
-    public boolean isNewBlock() {
+    boolean isNewBlock() {
         return !Arrays.equals(currentRoughLocation, previousRoughLocation);
     }
 
 
-    public void setEmptyCartTimer() {
+    void setEmptyCartTimer() {
         if(
                 SmartCart.config.getBoolean("empty_cart_timer_ignore_commandminecart", true) && isCommandMinecart() ||
                         SmartCart.config.getBoolean("empty_cart_timer_ignore_explosiveminecart", true) && isExplosiveMinecart() ||
@@ -126,7 +126,7 @@ public class SmartCartVehicle{
     }
 
 
-    public void resetEmptyCartTimer() {
+    void resetEmptyCartTimer() {
         emptyCartTimer = 0;
     }
 
@@ -138,20 +138,20 @@ public class SmartCartVehicle{
 
 
     // Returns true only if cart is in a rail block
-    public boolean isNotOnRail() {
+    boolean isNotOnRail() {
         return getCart().getLocation().getBlock().getType() != Material.RAILS;
     }
 
 
     // Returns true if the cart is directly above a control block
-    public boolean isOnControlBlock() {
+    boolean isOnControlBlock() {
         return SmartCart.util.isControlBlock( getCart().getLocation().add(0D, -1D, 0D).getBlock() );
     }
 
 
     // This looks two blocks below the rail for a sign. Sets the signText variable to
     //   the sign contents if the sign is a valid control sign, otherwise "".
-    public void readControlSign() {
+    void readControlSign() {
         Block block = getCart().getLocation().add(0D, -2D, 0D).getBlock();
         // Return if we're not over a sign
         if (SmartCart.util.isSign(block)) {
@@ -177,16 +177,32 @@ public class SmartCartVehicle{
                     sendPassengerMessage(pair.right(), false);
                 }
                 if (pair.left().equals("$END")) {
-                    SmartCart.logger.info("found an endpoint sign");
                     configEndpoint = pair.right();
                     sendPassengerMessage("Endpoint set to §a" + pair.right(), true);
-                    SmartCart.logger.info("set endpoint for minecart" + cart.getEntityId() + " to " + pair.right());
                 }
                 if (pair.left().equals("$TAG")) {
-                    SmartCart.logger.info("found a tag sign");
                     configEndpoint = pair.right();
                     sendPassengerMessage("Set tag to §a" + pair.right(), true);
-                    SmartCart.logger.info("set tag for minecart" + cart.getEntityId() + " to " + pair.right());
+                }
+                if(pair.left().equals("$N")){
+                    if(cart.getVelocity().getZ() < 0){
+                        spawnCartInNewDirection(this, pair.right());
+                    }
+                }
+                if(pair.left().equals("$E")){
+                    if(cart.getVelocity().getX() > 0) {
+                        spawnCartInNewDirection(this, pair.right());
+                    }
+                }
+                if(pair.left().equals("$W")){
+                    if(cart.getVelocity().getX() < 0){
+                        spawnCartInNewDirection(this, pair.right());
+                    }
+                }
+                if(pair.left().equals("$S")){
+                    if(cart.getVelocity().getZ() > 0){
+                        spawnCartInNewDirection(this, pair.right());
+                    }
                 }
                 if (pair.left().equals(configEndpoint) || pair.left().equals("$DEF")) {
                     // Skip this if we already found and used the endpoint
@@ -220,7 +236,7 @@ public class SmartCartVehicle{
                     }
                     if (SmartCart.util.isRail(blockAhead)) {
                         remove(true);
-                            SmartCartVehicle newSC = SmartCart.util.spawnCart(blockAhead);
+                        SmartCartVehicle newSC = SmartCart.util.spawnCart(blockAhead);
                         newSC.getCart().addPassenger(passenger);
                         newSC.getCart().setVelocity(vector);
                         transferSettings(newSC);
@@ -238,7 +254,7 @@ public class SmartCartVehicle{
 
 
     // Sets the speed to the max, in the direction the cart is already travelling
-    public void setSpeed(double speed) {
+    void setSpeed(double speed) {
 
         // Check if the cart is empty, and if we should boost empty carts
         if (getCart().isEmpty() && !SmartCart.config.getBoolean("boost_empty_carts")) {
@@ -268,7 +284,7 @@ public class SmartCartVehicle{
 
 
     // Destroy the cart (from plugin & server)
-    public void remove(boolean kill) {
+    void remove(boolean kill) {
 
         Entity passenger = getPassenger();
 
@@ -299,7 +315,7 @@ public class SmartCartVehicle{
     }
 
 
-    public void executeControl() {
+    void executeControl() {
         if (getCart().getPassengers().isEmpty()) {
             return;
         }
@@ -418,7 +434,7 @@ public class SmartCartVehicle{
     }
 
 
-    public String getPassengerName() {
+    String getPassengerName() {
         if (getCart().getPassengers().isEmpty()) {
             return "None";
         }
@@ -533,7 +549,7 @@ public class SmartCartVehicle{
         return getCart() instanceof StorageMinecart;
     }
 
-    public static List<Pair<String, String>> parseSign(Sign sign){
+    static List<Pair<String, String>> parseSign(Sign sign){
         List<Pair<String, String>> ret = new ArrayList<>();
         StringBuilder stringBuilder = new StringBuilder();
         for( String value : sign.getLines() ) { // Merge all the sign's lines
@@ -555,5 +571,39 @@ public class SmartCartVehicle{
             ret.add(new Pair<>(tokens[0], tokens[1]));
         }
         return ret;
+    }
+
+    private static void spawnCartInNewDirection(SmartCartVehicle oldCart, String direction){
+        Entity passenger = null;
+        if (!oldCart.cart.getPassengers().isEmpty()) {
+            passenger = oldCart.cart.getPassengers().get(0);
+        }
+        Block blockAhead = null;
+        Vector vector = new Vector(0, 0, 0);
+        switch (direction) {
+            case "N":
+                blockAhead = oldCart.cart.getLocation().add(0D, 0D, -1D).getBlock();
+                vector = new Vector(0, 0, -1);
+                break;
+            case "S":
+                blockAhead = oldCart.cart.getLocation().add(0D, 0D, 1D).getBlock();
+                vector = new Vector(0, 0, 1);
+                break;
+            case "E":
+                blockAhead = oldCart.cart.getLocation().add(1D, 0D, 0D).getBlock();
+                vector = new Vector(1, 0, 0);
+                break;
+            case "W":
+                blockAhead = oldCart.cart.getLocation().add(-1D, 0D, 0D).getBlock();
+                vector = new Vector(-1, 0, 0);
+                break;
+        }
+        if (SmartCart.util.isRail(blockAhead)) {
+            oldCart.remove(true);
+            SmartCartVehicle newSC = SmartCart.util.spawnCart(blockAhead);
+            newSC.getCart().addPassenger(passenger);
+            newSC.getCart().setVelocity(vector);
+            oldCart.transferSettings(newSC);
+        }
     }
 }

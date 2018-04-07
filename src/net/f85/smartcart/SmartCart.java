@@ -15,14 +15,14 @@ public class SmartCart extends JavaPlugin {
 
 
     private static SmartCartListener listener;
-    public static SmartCartUtil util;
-    public static FileConfiguration config;
-    public static Logger logger;
+    static SmartCartUtil util;
+    static FileConfiguration config;
+    static Logger logger;
 
 
     @Override
     public void onEnable() {
-
+        getLogger().info("Starting up SmartCart");
         //plugin = this;
 
         // Generate the default config file
@@ -36,9 +36,10 @@ public class SmartCart extends JavaPlugin {
 
         // Set up command executor
         //commandExecutor = new CommandExecutorUtil(this);
+        getLogger().info("Loading commands");
         this.getCommand("sc").setExecutor(new CommandExecutorUtil(this));
         this.getCommand("scSetTag").setExecutor(new CommandSetTag());
-
+        getLogger().info("done");
         getLogger().info("Successfully activated SmartCart");
     }
 
