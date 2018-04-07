@@ -14,12 +14,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.minecart.CommandMinecart;
-import org.bukkit.entity.minecart.ExplosiveMinecart;
-import org.bukkit.entity.minecart.HopperMinecart;
-import org.bukkit.entity.minecart.StorageMinecart;
-import org.bukkit.entity.minecart.PoweredMinecart;
-import org.bukkit.entity.minecart.SpawnerMinecart;
+import org.bukkit.entity.minecart.*;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -240,6 +235,28 @@ class SmartCartVehicle{
                         newSC.getCart().addPassenger(passenger);
                         newSC.getCart().setVelocity(vector);
                         transferSettings(newSC);
+                    }
+                }
+                if (pair.left().equals("$CAR")){
+                    if(pair.right().length() < 4){
+                        continue;
+                    }
+                    switch(pair.right().substring(0, 2)){
+                        case "PAS":
+                            if(isRideableMinecart()) spawnCartInNewDirection(this, "" + pair.right().charAt(3));
+                            break;
+                        case "POW":
+                            if(isPoweredMinecart()) moveCartToNewDirection(this, "" + pair.right().charAt(3));
+                            break;
+                        case "HOP":
+                            if(isHopperMinecart()) moveCartToNewDirection(this, "" + pair.right().charAt(3));
+                            break;
+                        case "TNT":
+                            if(isExplosiveMinecart()) moveCartToNewDirection(this, "" + pair.right().charAt(3));
+                            break;
+                        case "COM":
+                        case "SPN":
+                            break;
                     }
                 }
             }
@@ -537,9 +554,9 @@ class SmartCartVehicle{
         return getCart() instanceof PoweredMinecart;
     }
 
-    //public boolean isRideableMinecart() {
-    //    return getCart() instanceof RideableMinecart;
-    //}
+    private boolean isRideableMinecart() {
+        return getCart() instanceof RideableMinecart;
+    }
 
     private boolean isSpawnerMinecart() {
         return  getCart() instanceof SpawnerMinecart;
@@ -605,5 +622,34 @@ class SmartCartVehicle{
             newSC.getCart().setVelocity(vector);
             oldCart.transferSettings(newSC);
         }
+    }
+
+    private static void moveCartToNewDirection(SmartCartVehicle oldCart, String direction){
+        Block blockAhead = null;
+        Vector vector = new Vector(0, 0, 0);
+        switch (direction) {
+            case "N":
+                blockAhead = oldCart.cart.getLocation().add(0D, 0D, -1D).getBlock();
+                vector = new Vector(0, 0, -1);
+                break;
+            case "S":
+                blockAhead = oldCart.cart.getLocation().add(0D, 0D, 1D).getBlock();
+                vector = new Vector(0, 0, 1);
+                break;
+            case "E":
+                blockAhead = oldCart.cart.getLocation().add(1D, 0D, 0D).getBlock();
+                vector = new Vector(1, 0, 0);
+                break;
+            case "W":
+                blockAhead = oldCart.cart.getLocation().add(-1D, 0D, 0D).getBlock();
+                vector = new Vector(-1, 0, 0);
+                break;
+        }
+        if(SmartCart.util.isRail(blockAhead)){
+            oldCart.cart.setVelocity(new Vector(0, 0, 0));
+            if(blockAhead != null) oldCart.cart.teleport(blockAhead.getLocation());
+            oldCart.cart.setVelocity(vector);
+        }
+
     }
 }

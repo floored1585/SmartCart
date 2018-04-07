@@ -6,7 +6,10 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e0c5eeb2-0a7e-493e-9985-b8b9be06f559" name="Default" comment="" />
+    <list default="true" id="e0c5eeb2-0a7e-493e-9985-b8b9be06f559" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/src/net/f85/smartcart/SmartCartVehicle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/net/f85/smartcart/SmartCartVehicle.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/usercache.json" beforeDir="false" afterPath="$PROJECT_DIR$/usercache.json" afterDir="false" />
+    </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -15,13 +18,16 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FavoritesManager">
+    <favorites_list name="SmartCart" />
+  </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="SmartCartUtil.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/net/f85/smartcart/SmartCartUtil.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="-323">
-              <caret line="13" column="32" lean-forward="true" selection-start-line="13" selection-start-column="32" selection-end-line="13" selection-end-column="32" />
+              <caret line="13" column="32" selection-start-line="13" selection-start-column="32" selection-end-line="13" selection-end-column="32" />
               <folding>
                 <element signature="e#609#610#0" expanded="true" />
                 <element signature="e#645#646#0" expanded="true" />
@@ -57,8 +63,8 @@
       <file leaf-file-name="SmartCartVehicle.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/net/f85/smartcart/SmartCartVehicle.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="7044">
-              <caret line="588" column="16" lean-forward="true" selection-start-line="588" selection-start-column="16" selection-end-line="588" selection-end-column="16" />
+            <state relative-caret-position="428">
+              <caret line="649" column="35" selection-start-line="649" selection-start-column="35" selection-end-line="649" selection-end-column="35" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#2790#2791#0" expanded="true" />
@@ -71,6 +77,8 @@
                 <element signature="e#22029#22030#0" expanded="true" />
                 <element signature="e#22072#22073#0" expanded="true" />
                 <element signature="e#22131#22132#0" expanded="true" />
+                <element signature="e#22277#22278#0" expanded="true" />
+                <element signature="e#22337#22338#0" expanded="true" />
                 <element signature="e#22283#22284#0" expanded="true" />
                 <element signature="e#22343#22344#0" expanded="true" />
                 <element signature="e#22386#22387#0" expanded="true" />
@@ -322,31 +330,32 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" order="0" />
-      <window_info anchor="bottom" id="TODO" order="8" weight="0.32894737" />
-      <window_info anchor="bottom" id="Messages" order="6" weight="0.32894737" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.32750398" />
+      <window_info anchor="bottom" id="Messages" order="7" weight="0.32894737" />
       <window_info anchor="right" id="Palette&#9;" order="4" />
       <window_info id="Image Layers" order="7" />
       <window_info anchor="right" id="Capture Analysis" order="6" />
       <window_info anchor="bottom" id="Event Log" order="0" sideWeight="0.5030257" side_tool="true" weight="0.39967105" />
       <window_info anchor="right" id="Maven Projects" order="2" weight="0.32980332" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.4969743" visible="true" weight="0.32750398" />
+      <window_info anchor="bottom" x="33" y="470" width="1360" height="200" id="Run" order="2" sideWeight="0.4969743" weight="0.32750398" />
       <window_info anchor="bottom" id="Version Control" order="4" />
-      <window_info anchor="bottom" id="Terminal" order="5" weight="0.32894737" />
+      <window_info anchor="bottom" id="Terminal" order="5" weight="0.32750398" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="3" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25183016" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49881798" weight="0.25183016" />
+      <window_info anchor="bottom" id="Find" order="8" weight="0.32750398" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.24962178" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.24962178" />
       <window_info id="UI Designer" order="4" />
       <window_info anchor="right" id="Theme Preview" order="5" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.4969743" weight="0.39967105" />
-      <window_info id="Favorites" order="5" side_tool="true" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.4969743" weight="0.3990461" />
+      <window_info id="Favorites" order="5" sideWeight="0.501182" side_tool="true" weight="0.25183016" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="7" weight="0.24962178" />
       <window_info anchor="bottom" id="Inspection" order="10" weight="0.4" />
       <window_info anchor="right" id="Commander" order="3" weight="0.4" />
-      <window_info anchor="bottom" id="Find" order="7" weight="0.32894737" />
       <window_info anchor="bottom" id="Cvs" order="9" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="1" />
       <window_info id="Learn" order="6" weight="0.32980332" />
@@ -357,7 +366,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="37" />
+      <option name="time" value="38" />
     </breakpoint-manager>
   </component>
   <component name="antWorkspaceConfiguration">
@@ -708,7 +717,7 @@
     <entry file="file://$PROJECT_DIR$/src/net/f85/smartcart/SmartCartUtil.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-323">
-          <caret line="13" column="32" lean-forward="true" selection-start-line="13" selection-start-column="32" selection-end-line="13" selection-end-column="32" />
+          <caret line="13" column="32" selection-start-line="13" selection-start-column="32" selection-end-line="13" selection-end-column="32" />
           <folding>
             <element signature="e#609#610#0" expanded="true" />
             <element signature="e#645#646#0" expanded="true" />
@@ -720,8 +729,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/net/f85/smartcart/SmartCartVehicle.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7044">
-          <caret line="588" column="16" lean-forward="true" selection-start-line="588" selection-start-column="16" selection-end-line="588" selection-end-column="16" />
+        <state relative-caret-position="428">
+          <caret line="649" column="35" selection-start-line="649" selection-start-column="35" selection-end-line="649" selection-end-column="35" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#2790#2791#0" expanded="true" />
@@ -734,6 +743,8 @@
             <element signature="e#22029#22030#0" expanded="true" />
             <element signature="e#22072#22073#0" expanded="true" />
             <element signature="e#22131#22132#0" expanded="true" />
+            <element signature="e#22277#22278#0" expanded="true" />
+            <element signature="e#22337#22338#0" expanded="true" />
             <element signature="e#22283#22284#0" expanded="true" />
             <element signature="e#22343#22344#0" expanded="true" />
             <element signature="e#22386#22387#0" expanded="true" />
