@@ -8,6 +8,7 @@
   <component name="ChangeListManager">
     <list default="true" id="e0c5eeb2-0a7e-493e-9985-b8b9be06f559" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/net/f85/smartcart/SmartCartUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/net/f85/smartcart/SmartCartUtil.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/net/f85/smartcart/SmartCartVehicle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/net/f85/smartcart/SmartCartVehicle.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/usercache.json" beforeDir="false" afterPath="$PROJECT_DIR$/usercache.json" afterDir="false" />
     </list>
@@ -27,9 +28,10 @@
       <file leaf-file-name="SmartCartUtil.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/net/f85/smartcart/SmartCartUtil.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-323">
-              <caret line="13" column="32" selection-start-line="13" selection-start-column="32" selection-end-line="13" selection-end-column="32" />
+            <state relative-caret-position="346">
+              <caret line="308" column="34" lean-forward="true" selection-start-line="308" selection-start-column="34" selection-end-line="308" selection-end-column="34" />
               <folding>
+                <element signature="imports" expanded="true" />
                 <element signature="e#609#610#0" expanded="true" />
                 <element signature="e#645#646#0" expanded="true" />
                 <element signature="e#720#721#0" expanded="true" />
@@ -42,8 +44,8 @@
       <file leaf-file-name="SmartCart.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/net/f85/smartcart/SmartCart.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="19" column="4" selection-start-line="19" selection-start-column="4" selection-end-line="19" selection-end-column="4" />
+            <state>
+              <caret line="5" column="2" selection-start-line="5" selection-start-column="2" selection-end-line="5" selection-end-column="2" />
               <folding>
                 <element signature="e#1148#1149#0" expanded="true" />
                 <element signature="e#1218#1219#0" expanded="true" />
@@ -55,8 +57,8 @@
       <file leaf-file-name="SmartCartListener.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/net/f85/smartcart/SmartCartListener.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3179">
-              <caret line="208" column="17" selection-start-line="208" selection-start-column="17" selection-end-line="208" selection-end-column="17" />
+            <state relative-caret-position="204">
+              <caret line="69" column="17" selection-start-line="69" selection-start-column="17" selection-end-line="69" selection-end-column="17" />
             </state>
           </provider>
         </entry>
@@ -64,12 +66,25 @@
       <file leaf-file-name="SmartCartVehicle.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/net/f85/smartcart/SmartCartVehicle.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="309">
-              <caret line="252" column="18" selection-start-line="252" selection-start-column="18" selection-end-line="252" selection-end-column="18" />
+            <state relative-caret-position="-1037">
+              <caret line="19" column="27" lean-forward="true" selection-start-line="19" selection-start-column="27" selection-end-line="19" selection-end-column="27" />
               <folding>
-                <element signature="imports" expanded="true" />
+                <element signature="e#1659#1660#0" expanded="true" />
+                <element signature="e#1686#1687#0" expanded="true" />
                 <element signature="e#2790#2791#0" expanded="true" />
                 <element signature="e#2836#2837#0" expanded="true" />
+                <element signature="e#21460#21461#0" expanded="true" />
+                <element signature="e#21519#21520#0" expanded="true" />
+                <element signature="e#21564#21565#0" expanded="true" />
+                <element signature="e#21626#21627#0" expanded="true" />
+                <element signature="e#21668#21669#0" expanded="true" />
+                <element signature="e#21726#21727#0" expanded="true" />
+                <element signature="e#21769#21770#0" expanded="true" />
+                <element signature="e#21828#21829#0" expanded="true" />
+                <element signature="e#21975#21976#0" expanded="true" />
+                <element signature="e#22035#22036#0" expanded="true" />
+                <element signature="e#22078#22079#0" expanded="true" />
+                <element signature="e#22137#22138#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -133,8 +148,8 @@
         <option value="$PROJECT_DIR$/src/net/f85/smartcart/SmartCartListener.java" />
         <option value="$PROJECT_DIR$/src/net/f85/smartcart/CommandSetTag.java" />
         <option value="$PROJECT_DIR$/src/net/f85/smartcart/SmartCart.java" />
-        <option value="$PROJECT_DIR$/src/net/f85/smartcart/SmartCartUtil.java" />
         <option value="$PROJECT_DIR$/src/config.yml" />
+        <option value="$PROJECT_DIR$/src/net/f85/smartcart/SmartCartUtil.java" />
         <option value="$PROJECT_DIR$/src/net/f85/smartcart/SmartCartVehicle.java" />
       </list>
     </option>
@@ -146,7 +161,7 @@
     </treeState>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-7" />
+    <option name="x" value="676" />
     <option name="width" value="697" />
     <option name="height" value="735" />
   </component>
@@ -176,19 +191,6 @@
               <item name="SmartCart" type="462c0819:PsiDirectoryNode" />
               <item name="out" type="462c0819:PsiDirectoryNode" />
               <item name="artifacts" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="SmartCart" type="b2602c69:ProjectViewProjectNode" />
-              <item name="SmartCart" type="462c0819:PsiDirectoryNode" />
-              <item name="out" type="462c0819:PsiDirectoryNode" />
-              <item name="production" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="SmartCart" type="b2602c69:ProjectViewProjectNode" />
-              <item name="SmartCart" type="462c0819:PsiDirectoryNode" />
-              <item name="out" type="462c0819:PsiDirectoryNode" />
-              <item name="production" type="462c0819:PsiDirectoryNode" />
-              <item name="SmartCart" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="SmartCart" type="b2602c69:ProjectViewProjectNode" />
@@ -321,7 +323,7 @@
     <layout>
       <window_info anchor="right" id="Palette" order="0" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32750398" />
-      <window_info anchor="bottom" id="Messages" order="7" weight="0.32894737" />
+      <window_info anchor="bottom" id="Messages" order="7" weight="0.32750398" />
       <window_info anchor="right" id="Palette&#9;" order="4" />
       <window_info id="Image Layers" order="7" />
       <window_info anchor="right" id="Capture Analysis" order="6" />
@@ -332,7 +334,7 @@
       <window_info anchor="bottom" id="Terminal" order="5" weight="0.32750398" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="3" />
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49881798" weight="0.25183016" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49881798" visible="true" weight="0.25183016" />
       <window_info anchor="bottom" id="Find" order="8" weight="0.32750398" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.24962178" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.24962178" />
@@ -353,7 +355,15 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="39" />
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/net/f85/smartcart/SmartCartUtil.java</url>
+          <line>312</line>
+          <properties />
+          <option name="timeStamp" value="46" />
+        </line-breakpoint>
+      </breakpoints>
+      <option name="time" value="47" />
     </breakpoint-manager>
   </component>
   <component name="antWorkspaceConfiguration">
@@ -361,41 +371,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$USER_HOME$/Downloads/spigot-1.12.2.jar!/org/bukkit/material/MaterialData.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/Downloads/spigot-1.12.2.jar!/org/bukkit/block/BlockState.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="14" column="24" lean-forward="true" selection-start-line="14" selection-start-column="24" selection-end-line="14" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/Downloads/spigot-1.12.2.jar!/org/bukkit/block/Chest.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="10" column="17" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/Downloads/spigot-1.12.2.jar!/org/bukkit/block/CommandBlock.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="7" column="17" selection-start-line="7" selection-start-column="17" selection-end-line="7" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/Downloads/spigot-1.12.2.jar!/org/bukkit/UnsafeValues.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="13" column="17" selection-start-line="13" selection-start-column="17" selection-end-line="13" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$USER_HOME$/Downloads/spigot-1.12.2.jar!/org/bukkit/block/Block.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="153">
@@ -409,9 +384,6 @@
           <caret line="2646" column="18" selection-start-line="2646" selection-start-column="18" selection-end-line="2646" selection-end-column="18" />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SmartCart.iml">
-      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/src/net/f85/smartcart/Pair.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -617,13 +589,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar://$USER_HOME$/Downloads/spigot-1.12.2.jar!/org/bukkit/craftbukkit/v1_12_R1/entity/CraftEntity.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="145" column="47" lean-forward="true" selection-start-line="145" selection-start-column="47" selection-end-line="145" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$USER_HOME$/Downloads/spigot-1.12.2.jar!/org/bukkit/entity/Entity.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
@@ -685,27 +650,65 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/net/f85/smartcart/SmartCartListener.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3179">
-          <caret line="208" column="17" selection-start-line="208" selection-start-column="17" selection-end-line="208" selection-end-column="17" />
+        <state relative-caret-position="204">
+          <caret line="69" column="17" selection-start-line="69" selection-start-column="17" selection-end-line="69" selection-end-column="17" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/f85/smartcart/SmartCart.java">
+    <entry file="jar://$USER_HOME$/Downloads/spigot-1.12.2.jar!/net/minecraft/server/v1_12_R1/World.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="19" column="4" selection-start-line="19" selection-start-column="4" selection-end-line="19" selection-end-column="4" />
+        <state relative-caret-position="110">
+          <caret line="146" selection-start-line="146" selection-end-line="146" />
           <folding>
-            <element signature="e#1148#1149#0" expanded="true" />
-            <element signature="e#1218#1219#0" expanded="true" />
+            <element signature="e#5742#5743#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/Downloads/spigot-1.12.2.jar!/net/minecraft/server/v1_12_R1/Entity.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="117">
+          <caret line="184" selection-start-line="184" selection-end-line="184" />
+          <folding>
+            <element signature="e#6697#6698#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/Downloads/spigot-1.12.2.jar!/org/bukkit/craftbukkit/v1_12_R1/entity/CraftEntity.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="87">
+          <caret line="601" selection-start-line="601" selection-end-line="601" />
+          <folding>
+            <element signature="e#27351#27352#0" expanded="true" />
+            <element signature="e#27402#27403#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/Downloads/spigot-1.12.2.jar!/org/bukkit/craftbukkit/v1_12_R1/CraftWorld.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="117">
+          <caret line="865" selection-start-line="865" selection-end-line="865" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/Downloads/spigot-1.12.2.jar!/org/bukkit/Location.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="87">
+          <caret line="48" selection-start-line="48" selection-end-line="48" />
+          <folding>
+            <element signature="e#1213#1214#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/net/f85/smartcart/SmartCartUtil.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-323">
-          <caret line="13" column="32" selection-start-line="13" selection-start-column="32" selection-end-line="13" selection-end-column="32" />
+        <state relative-caret-position="346">
+          <caret line="308" column="34" lean-forward="true" selection-start-line="308" selection-start-column="34" selection-end-line="308" selection-end-column="34" />
           <folding>
+            <element signature="imports" expanded="true" />
             <element signature="e#609#610#0" expanded="true" />
             <element signature="e#645#646#0" expanded="true" />
             <element signature="e#720#721#0" expanded="true" />
@@ -714,14 +717,44 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/net/f85/smartcart/SmartCart.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret line="5" column="2" selection-start-line="5" selection-start-column="2" selection-end-line="5" selection-end-column="2" />
+          <folding>
+            <element signature="e#1148#1149#0" expanded="true" />
+            <element signature="e#1218#1219#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SmartCart.iml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/usercache.json">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/net/f85/smartcart/SmartCartVehicle.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="309">
-          <caret line="252" column="18" selection-start-line="252" selection-start-column="18" selection-end-line="252" selection-end-column="18" />
+        <state relative-caret-position="-1037">
+          <caret line="19" column="27" lean-forward="true" selection-start-line="19" selection-start-column="27" selection-end-line="19" selection-end-column="27" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#1659#1660#0" expanded="true" />
+            <element signature="e#1686#1687#0" expanded="true" />
             <element signature="e#2790#2791#0" expanded="true" />
             <element signature="e#2836#2837#0" expanded="true" />
+            <element signature="e#21460#21461#0" expanded="true" />
+            <element signature="e#21519#21520#0" expanded="true" />
+            <element signature="e#21564#21565#0" expanded="true" />
+            <element signature="e#21626#21627#0" expanded="true" />
+            <element signature="e#21668#21669#0" expanded="true" />
+            <element signature="e#21726#21727#0" expanded="true" />
+            <element signature="e#21769#21770#0" expanded="true" />
+            <element signature="e#21828#21829#0" expanded="true" />
+            <element signature="e#21975#21976#0" expanded="true" />
+            <element signature="e#22035#22036#0" expanded="true" />
+            <element signature="e#22078#22079#0" expanded="true" />
+            <element signature="e#22137#22138#0" expanded="true" />
           </folding>
         </state>
       </provider>

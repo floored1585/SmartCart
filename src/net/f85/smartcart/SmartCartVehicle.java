@@ -147,9 +147,11 @@ class SmartCartVehicle{
     // This looks two blocks below the rail for a sign. Sets the signText variable to
     //   the sign contents if the sign is a valid control sign, otherwise "".
     void readControlSign() {
-        Block block = getCart().getLocation().add(0D, -2D, 0D).getBlock();
+        //List<Block> signs = SmartCart.util.findSignsNearby(this);
+        Block block = getCart().getLocation().add(0, -2, 0).getBlock();
         // Return if we're not over a sign
-        if (SmartCart.util.isSign(block)) {
+        if(SmartCart.util.isSign(block)){
+        //for(Block block : signs){
             if (isNotOnRail()) {
                 return;
             }
@@ -546,9 +548,9 @@ class SmartCartVehicle{
         return getCart() instanceof PoweredMinecart;
     }
 
-    private boolean isRideableMinecart() {
-        return getCart() instanceof RideableMinecart;
-    }
+    //private boolean isRideableMinecart() {
+    //    return getCart() instanceof RideableMinecart;
+    //}
 
     private boolean isSpawnerMinecart() {
         return  getCart() instanceof SpawnerMinecart;
@@ -616,6 +618,7 @@ class SmartCartVehicle{
         }
     }
 
+    /*
     private static void moveCartToNewDirection(SmartCartVehicle oldCart, String direction){
         Block blockAhead = null;
         Vector vector = new Vector(0, 0, 0);
@@ -644,4 +647,5 @@ class SmartCartVehicle{
         }
 
     }
+    */
 }
