@@ -147,113 +147,42 @@ class SmartCartVehicle{
     // This looks two blocks below the rail for a sign. Sets the signText variable to
     //   the sign contents if the sign is a valid control sign, otherwise "".
     void readControlSign() {
-        //List<Block> signs = SmartCart.util.findSignsNearby(this);
-        Block block = getCart().getLocation().add(0, -2, 0).getBlock();
+        Block block1 = getCart().getLocation().add(0, -2, 0).getBlock();
+        Block block2 = getCart().getLocation().add(1, -1, 0).getBlock();
+        Block block3 = getCart().getLocation().add(-1, -1, 0).getBlock();
+        Block block4 = getCart().getLocation().add(0, -1, 1).getBlock();
+        Block block5 = getCart().getLocation().add(1, -1, -1).getBlock();
+        Block block6 = getCart().getLocation().add(1, 0, 0).getBlock();
+        Block block7 = getCart().getLocation().add(-1, 0, 0).getBlock();
+        Block block8 = getCart().getLocation().add(0, 0, 1).getBlock();
+        Block block9 = getCart().getLocation().add(0, 0, -1).getBlock();
         // Return if we're not over a sign
-        if(SmartCart.util.isSign(block)){
-        //for(Block block : signs){
-            if (isNotOnRail()) {
-                return;
-            }
-            boolean foundEndpoint = false;
-            Sign sign = (Sign) block.getState(); // Cast to Sign
-            for(Pair<String, String> pair : parseSign(sign)) {
-                Pattern p;
-                if (pair.left().equals("$SPD")) {
-                    p = Pattern.compile("^\\d*\\.?\\d+");
-                    Double minSpeed = 0D;
-                    Double maxSpeed = SmartCart.config.getDouble("max_cart_speed");
-                    if (!p.matcher(pair.right()).find() || Double.parseDouble(pair.right()) > maxSpeed || Double.parseDouble(pair.right()) < minSpeed) {
-                        sendPassengerMessage("Bad speed value: \"" + pair.right() + "\". Must be a numeric value (decimals OK) between "
-                                + minSpeed + " and " + maxSpeed + ".", true);
-                        continue;
-                    }
-                    configSpeed = Double.parseDouble(pair.right());
-                }
-                if (pair.left().equals("$MSG")) {
-                    sendPassengerMessage(pair.right(), false);
-                }
-                if (pair.left().equals("$END")) {
-                    configEndpoint = pair.right();
-                    sendPassengerMessage("Endpoint set to §a" + pair.right(), true);
-                }
-                if (pair.left().equals("$TAG")) {
-                    configEndpoint = pair.right();
-                    sendPassengerMessage("Set tag to §a" + pair.right(), true);
-                }
-                if(pair.left().equals("$N")){
-                    if(cart.getVelocity().getZ() < 0){
-                        spawnCartInNewDirection(this, pair.right());
-                    }
-                }
-                if(pair.left().equals("$E")){
-                    if(cart.getVelocity().getX() > 0) {
-                        spawnCartInNewDirection(this, pair.right());
-                    }
-                }
-                if(pair.left().equals("$W")){
-                    if(cart.getVelocity().getX() < 0){
-                        spawnCartInNewDirection(this, pair.right());
-                    }
-                }
-                if(pair.left().equals("$S")){
-                    if(cart.getVelocity().getZ() > 0){
-                        spawnCartInNewDirection(this, pair.right());
-                    }
-                }
-                if (pair.left().equals(configEndpoint) || pair.left().equals("$DEF")) {
-                    // Skip this if we already found and used the endpoint
-                    Entity passenger = null;
-                    if (!cart.getPassengers().isEmpty()) {
-                        passenger = cart.getPassengers().get(0);
-                    }
-                    if (foundEndpoint || passenger == null) {
-                        continue;
-                    }
-                    foundEndpoint = true;
-                    Block blockAhead = null;
-                    Vector vector = new Vector(0, 0, 0);
-                    switch (pair.right()) {
-                        case "N":
-                            blockAhead = cart.getLocation().add(0D, 0D, -1D).getBlock();
-                            vector = new Vector(0, 0, -1);
-                            break;
-                        case "S":
-                            blockAhead = cart.getLocation().add(0D, 0D, 1D).getBlock();
-                            vector = new Vector(0, 0, 1);
-                            break;
-                        case "E":
-                            blockAhead = cart.getLocation().add(1D, 0D, 0D).getBlock();
-                            vector = new Vector(1, 0, 0);
-                            break;
-                        case "W":
-                            blockAhead = cart.getLocation().add(-1D, 0D, 0D).getBlock();
-                            vector = new Vector(-1, 0, 0);
-                            break;
-                    }
-                    if (SmartCart.util.isRail(blockAhead)) {
-                        remove(true);
-                        SmartCartVehicle newSC = SmartCart.util.spawnCart(blockAhead);
-                        newSC.getCart().addPassenger(passenger);
-                        newSC.getCart().setVelocity(vector);
-                        transferSettings(newSC);
-                    }
-                }
-                /*
-                if (pair.left().equals("$PAS")) {
-                    if (isRideableMinecart()) spawnCartInNewDirection(this, pair.right());
-                }
-                if(pair.left().equals("$POW")) {
-                    if (isPoweredMinecart()) moveCartToNewDirection(this, pair.right());
-                }
-                if(pair.left().equals("$HOP")) {
-                    if (isHopperMinecart()) moveCartToNewDirection(this, pair.right());
-                }
-                if(pair.left().equals("$TNT")) {
-                    if(isExplosiveMinecart()) moveCartToNewDirection(this, pair.right());
-                }
-                */
-            }
+        if(SmartCart.util.isSign(block1)){
+            executeSign(block1);
+        }
+        if(SmartCart.util.isSign(block2)){
+            executeSign(block2);
+        }
+        if(SmartCart.util.isSign(block3)){
+            executeSign(block3);
+        }
+        if(SmartCart.util.isSign(block4)){
+            executeSign(block4);
+        }
+        if(SmartCart.util.isSign(block5)){
+            executeSign(block5);
+        }
+        if(SmartCart.util.isSign(block6)){
+            executeSign(block6);
+        }
+        if(SmartCart.util.isSign(block7)){
+            executeSign(block7);
+        }
+        if(SmartCart.util.isSign(block8)){
+            executeSign(block8);
+        }
+        if(SmartCart.util.isSign(block9)){
+            executeSign(block9);
         }
     }
 
@@ -343,34 +272,41 @@ class SmartCartVehicle{
                     Entity passenger = cart.getPassengers().get(0);
                     remove(true);
                     //add code for checking for $EJT signs
-                    Block blockOver = getCart().getLocation().add(0, -2, 0).getBlock();
-                    if (SmartCart.util.isSign(blockOver)) {
-                        Sign sign = (Sign) blockOver.getState();
-                        for (Pair<String, String> pair : parseSign(sign)) {
-                            if (pair.left().equals("$EJT") && pair.right().length() >= 2) {
-                                int dist = Integer.parseInt(pair.right().substring(1, pair.right().length()));
-                                switch (pair.right().charAt(0)) {
-                                    case 'N':
-                                        passenger.teleport(passenger.getLocation().add(0, 0, -dist));
-                                        break;
-                                    case 'E':
-                                        passenger.teleport(passenger.getLocation().add(dist, 0, 0));
-                                        break;
-                                    case 'S':
-                                        passenger.teleport(passenger.getLocation().add(0, 0, dist));
-                                        break;
-                                    case 'W':
-                                        passenger.teleport(passenger.getLocation().add(-dist, 0, 0));
-                                        break;
-                                    case 'U':
-                                        passenger.teleport(passenger.getLocation().add(0, dist, 0));
-                                        break;
-                                    case 'D':
-                                        passenger.teleport(passenger.getLocation().add(0, -dist, 0));
-                                        break;
-                                }
-                            }
-                        }
+                    Block block1 = getCart().getLocation().add(0, -2, 0).getBlock();
+                    Block block2 = getCart().getLocation().add(1, -1, 0).getBlock();
+                    Block block3 = getCart().getLocation().add(-1, -1, 0).getBlock();
+                    Block block4 = getCart().getLocation().add(0, -1, 1).getBlock();
+                    Block block5 = getCart().getLocation().add(1, -1, -1).getBlock();
+                    Block block6 = getCart().getLocation().add(1, 0, 0).getBlock();
+                    Block block7 = getCart().getLocation().add(-1, 0, 0).getBlock();
+                    Block block8 = getCart().getLocation().add(0, 0, 1).getBlock();
+                    Block block9 = getCart().getLocation().add(0, 0, -1).getBlock();
+                    if (SmartCart.util.isSign(block1)) {
+                        executeEJT(passenger, block1);
+                    }
+                    if (SmartCart.util.isSign(block2)) {
+                        executeEJT(passenger, block2);
+                    }
+                    if (SmartCart.util.isSign(block3)) {
+                        executeEJT(passenger, block3);
+                    }
+                    if (SmartCart.util.isSign(block4)) {
+                        executeEJT(passenger, block4);
+                    }
+                    if (SmartCart.util.isSign(block5)) {
+                        executeEJT(passenger, block5);
+                    }
+                    if (SmartCart.util.isSign(block6)) {
+                        executeEJT(passenger, block6);
+                    }
+                    if (SmartCart.util.isSign(block7)) {
+                        executeEJT(passenger, block7);
+                    }
+                    if (SmartCart.util.isSign(block8)) {
+                        executeEJT(passenger, block8);
+                    }
+                    if (SmartCart.util.isSign(block9)) {
+                        executeEJT(passenger, block9);
                     }
                 }
             } else {
@@ -648,4 +584,144 @@ class SmartCartVehicle{
 
     }
     */
+
+    private void executeSign(Block block) {
+        if (isNotOnRail()) {
+            return;
+        }
+        boolean foundEndpoint = false;
+        Sign sign = (Sign) block.getState(); // Cast to Sign
+        for (Pair<String, String> pair : parseSign(sign)) {
+            Pattern p;
+            if (pair.left().equals("$LNC")) {
+                if (getCart().getLocation().add(0, -1, 0).getBlock().getState().getData().toString().contains("BLACK WOOL")) {
+                    spawnCartInNewDirection(this, pair.right());
+                }
+            }
+            if (pair.left().equals("$SPD")) {
+                p = Pattern.compile("^\\d*\\.?\\d+");
+                Double minSpeed = 0D;
+                Double maxSpeed = SmartCart.config.getDouble("max_cart_speed");
+                if (!p.matcher(pair.right()).find() || Double.parseDouble(pair.right()) > maxSpeed || Double.parseDouble(pair.right()) < minSpeed) {
+                    sendPassengerMessage("Bad speed value: \"" + pair.right() + "\". Must be a numeric value (decimals OK) between "
+                            + minSpeed + " and " + maxSpeed + ".", true);
+                    return;
+                }
+                configSpeed = Double.parseDouble(pair.right());
+            }
+            if (pair.left().equals("$MSG")) {
+                sendPassengerMessage(pair.right(), false);
+            }
+            if (pair.left().equals("$END")) {
+                configEndpoint = pair.right();
+                sendPassengerMessage("Endpoint set to §a" + pair.right(), true);
+            }
+            if (pair.left().equals("$TAG")) {
+                configEndpoint = pair.right();
+                sendPassengerMessage("Set tag to §a" + pair.right(), true);
+            }
+            if (pair.left().equals("$N")) {
+                if (cart.getVelocity().getZ() < 0) {
+                    spawnCartInNewDirection(this, pair.right());
+                }
+            }
+            if (pair.left().equals("$E")) {
+                if (cart.getVelocity().getX() > 0) {
+                    spawnCartInNewDirection(this, pair.right());
+                }
+            }
+            if (pair.left().equals("$W")) {
+                if (cart.getVelocity().getX() < 0) {
+                    spawnCartInNewDirection(this, pair.right());
+                }
+            }
+            if (pair.left().equals("$S")) {
+                if (cart.getVelocity().getZ() > 0) {
+                    spawnCartInNewDirection(this, pair.right());
+                }
+            }
+            if (pair.left().equals(configEndpoint) || pair.left().equals("$DEF")) {
+                // Skip this if we already found and used the endpoint
+                Entity passenger = null;
+                if (!cart.getPassengers().isEmpty()) {
+                    passenger = cart.getPassengers().get(0);
+                }
+                if (foundEndpoint || passenger == null) {
+                    return;
+                }
+                foundEndpoint = true;
+                Block blockAhead = null;
+                Vector vector = new Vector(0, 0, 0);
+                switch (pair.right()) {
+                    case "N":
+                        blockAhead = cart.getLocation().add(0D, 0D, -1D).getBlock();
+                        vector = new Vector(0, 0, -1);
+                        break;
+                    case "S":
+                        blockAhead = cart.getLocation().add(0D, 0D, 1D).getBlock();
+                        vector = new Vector(0, 0, 1);
+                        break;
+                    case "E":
+                        blockAhead = cart.getLocation().add(1D, 0D, 0D).getBlock();
+                        vector = new Vector(1, 0, 0);
+                        break;
+                    case "W":
+                        blockAhead = cart.getLocation().add(-1D, 0D, 0D).getBlock();
+                        vector = new Vector(-1, 0, 0);
+                        break;
+                }
+                if (SmartCart.util.isRail(blockAhead)) {
+                    remove(true);
+                    SmartCartVehicle newSC = SmartCart.util.spawnCart(blockAhead);
+                    newSC.getCart().addPassenger(passenger);
+                    newSC.getCart().setVelocity(vector);
+                    transferSettings(newSC);
+                }
+            }
+            /*
+            if (pair.left().equals("$PAS")) {
+                if (isRideableMinecart()) spawnCartInNewDirection(this, pair.right());
+            }
+            if(pair.left().equals("$POW")) {
+                if (isPoweredMinecart()) moveCartToNewDirection(this, pair.right());
+            }
+            if(pair.left().equals("$HOP")) {
+                if (isHopperMinecart()) moveCartToNewDirection(this, pair.right());
+            }
+            if(pair.left().equals("$TNT")) {
+                if(isExplosiveMinecart()) moveCartToNewDirection(this, pair.right());
+            }
+            */
+        }
+    }
+
+    private void executeEJT(Entity passenger, Block block){
+        Sign sign = (Sign) block.getState();
+        for (Pair<String, String> pair : parseSign(sign)) {
+            if (pair.left().equals("$EJT") && pair.right().length() >= 2) {
+                int dist = Integer.parseInt(pair.right().substring(1, pair.right().length()));
+                switch (pair.right().charAt(0)) {
+                    case 'N':
+                        passenger.teleport(passenger.getLocation().add(0, 0, -dist));
+                        break;
+                    case 'E':
+                        passenger.teleport(passenger.getLocation().add(dist, 0, 0));
+                        break;
+                    case 'S':
+                        passenger.teleport(passenger.getLocation().add(0, 0, dist));
+                        break;
+                    case 'W':
+                        passenger.teleport(passenger.getLocation().add(-dist, 0, 0));
+                        break;
+                    case 'U':
+                        passenger.teleport(passenger.getLocation().add(0, dist, 0));
+                        break;
+                    case 'D':
+                        passenger.teleport(passenger.getLocation().add(0, -dist, 0));
+                        break;
+                }
+            }
+        }
+
+    }
 }

@@ -6,7 +6,6 @@
 //
 package net.f85.smartcart;
 
-import org.bukkit.block.Sign;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Entity;
@@ -20,7 +19,6 @@ import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.block.Block;
 import org.bukkit.Material;
-import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 
@@ -162,52 +160,51 @@ public class SmartCartListener implements Listener {
         for (Entity entity : cart.getNearbyEntities(r, r, r)) {
             if (entity instanceof Player && cart.getPassengers().isEmpty() && entity.getVehicle() == null) {
                 cart.addPassenger(entity);
-                Block block1 = cart.getLocation().add(0, -2, 0).getBlock();
-                if (block1.getType() == Material.SIGN || block1.getType() == Material.SIGN_POST || block1.getType() == Material.WALL_SIGN) {
-                    Sign sign = (Sign) block1.getState();
-                    if(cart.getVelocity().getX() == 0 && cart.getVelocity().getZ() == 0) {
-                        for (Pair<String, String> pair : SmartCartVehicle.parseSign(sign)) {
-                            if (pair.left().equals("$LNC"))
-                                switch (pair.right()) {
-                                    case "N":
-                                        if (SmartCart.util.isRail(cart.getLocation().add(0, 0, -1).getBlock())) {
-                                            cart.teleport(cart.getLocation().add(0, 0, -1));
-                                            cart.setVelocity(new Vector(0, 0, -1));
-                                        }
-                                        break;
-                                    case "E":
-                                        if (SmartCart.util.isRail(cart.getLocation().add(1, 0, 0).getBlock())) {
-                                            cart.teleport(cart.getLocation().add(1, 0, 0));
-                                            cart.setVelocity(new Vector(1, 0, 0));
-                                        }
-                                        break;
-                                    case "W":
-                                        if (SmartCart.util.isRail(cart.getLocation().add(-1, 0, 0).getBlock())) {
-                                            cart.teleport(cart.getLocation().add(-1, 0, 0));
-                                            cart.setVelocity(new Vector(-1, 0, 0));
-                                        }
-                                        break;
-                                    case "S":
-                                        if (SmartCart.util.isRail(cart.getLocation().add(0, 0, 1).getBlock())) {
-                                            cart.teleport(cart.getLocation().add(0, 0, 1));
-                                            cart.setVelocity(new Vector(0, 0, 1));
-                                        }
-                                        break;
-                                }
-                            if(pair.left().equals("$END")){
-                                SmartCartVehicle smartCart = SmartCart.util.getCartFromList(cart);
-                                smartCart.configEndpoint = pair.right();
-                                ((Player)cart.getPassengers().get(0)).sendRawMessage("§6[Smart Cart] §7Endpoint set to §a" + pair.right());
-                            }
-                            if(pair.left().equals("$TAG")){
-                                SmartCartVehicle smartCart = SmartCart.util.getCartFromList(cart);
-                                smartCart.configEndpoint = pair.right();
-                                ((Player)cart.getPassengers().get(0)).sendRawMessage("§6[Smart Cart] §7Set tag to §a" + pair.right());
-                            }
-                        }
-                    }
+                SmartCartVehicle smartCart = SmartCart.util.getCartFromList(cart);
+                boolean foundSignNearby = false;
+                Block block1 = smartCart.getCart().getLocation().add(0, -2, 0).getBlock();
+                Block block2 = smartCart.getCart().getLocation().add(1, -1, 0).getBlock();
+                Block block3 = smartCart.getCart().getLocation().add(-1, -1, 0).getBlock();
+                Block block4 = smartCart.getCart().getLocation().add(0, -1, 1).getBlock();
+                Block block5 = smartCart.getCart().getLocation().add(1, -1, -1).getBlock();
+                Block block6 = smartCart.getCart().getLocation().add(1, 0, 0).getBlock();
+                Block block7 = smartCart.getCart().getLocation().add(-1, 0, 0).getBlock();
+                Block block8 = smartCart.getCart().getLocation().add(0, 0, 1).getBlock();
+                Block block9 = smartCart.getCart().getLocation().add(0, 0, -1).getBlock();
+                // Return if we're not over a sign
+                if(SmartCart.util.isSign(block1)){
+                    foundSignNearby = true;
                 }
-                else SmartCart.util.sendMessage(entity, "Move in the direction you wish to go.");
+                if(SmartCart.util.isSign(block2)){
+                    foundSignNearby = true;
+                }
+                if(SmartCart.util.isSign(block3)){
+                    foundSignNearby = true;
+                }
+                if(SmartCart.util.isSign(block4)){
+                    foundSignNearby = true;
+                }
+                if(SmartCart.util.isSign(block5)){
+                    foundSignNearby = true;
+                }
+                if(SmartCart.util.isSign(block6)){
+                    foundSignNearby = true;
+                }
+                if(SmartCart.util.isSign(block7)){
+                    foundSignNearby = true;
+                }
+                if(SmartCart.util.isSign(block8)){
+                    foundSignNearby = true;
+                }
+                if(SmartCart.util.isSign(block9)){
+                    foundSignNearby = true;
+                }
+                if(foundSignNearby){
+                    smartCart.executeControl();
+                }
+                else {
+                    SmartCart.util.sendMessage(entity, "Move in the direction you wish to go.");
+                }
                 break;
             }
         }

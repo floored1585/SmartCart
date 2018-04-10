@@ -48,6 +48,4 @@ public class SmartCart extends JavaPlugin {
     public void onDisable() {
         getLogger().info("Successfully deactivated SmartCart");
     }
-
-
 }

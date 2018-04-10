@@ -297,19 +297,4 @@ class SmartCartUtil {
     boolean isSign(Block block){
         return block.getType() == Material.SIGN || block.getType() == Material.SIGN_POST || block.getType() == Material.WALL_SIGN;
     }
-
-    List<Block> findSignsNearby(SmartCartVehicle cart){
-        List<Block> signs = new ArrayList<>();
-        Location location = cart.getCart().getLocation();
-        if(isSign(location.add(0, -2, 0).getBlock())) signs.add(location.add(0, -2, 0).getBlock());
-        if(isSign(location.add(1, -1, 0).getBlock())) signs.add(location.add(1, -1, 0).getBlock());
-        if(isSign(location.add(-1, -1, 0).getBlock())) signs.add(location.add(-1, -1, 0).getBlock());
-        if(isSign(location.add(0, -1, 1).getBlock())) signs.add(location.add(0, -1, 1).getBlock());
-        if(isSign(location.add(1, -1, -1).getBlock())) signs.add(location.add(1, -1, -1).getBlock());
-        if(isSign(location.add(1, 0, 0).getBlock())) signs.add(location.add(1, 0, 0).getBlock());
-        if(isSign(location.add(-1, 0, 0).getBlock())) signs.add(location.add(-1, 0, 0).getBlock());
-        if(isSign(location.add(0, 0, 1).getBlock())) signs.add(location.add(0, 0, 1).getBlock());
-        if(isSign(location.add(0, 0, -1).getBlock())) signs.add(location.add(0, 0, -1).getBlock());
-        return signs;
-    }
 }
