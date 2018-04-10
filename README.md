@@ -28,8 +28,9 @@ Below is a list of currently supported settings and values.  If you would like t
 | $END or $TAG | <code>$END:Oz</code> or <code>$TAG:Oz</code> | Endpoint/Tag - Sets the endpoint that this cart will attempt to reach.  After setting $END, you can use signs under intersections (no wool required) to direct the cart to the correct endpoint. See example below.|
 | Oz (example) | <code>Oz:W</code> | Endpoint direction - This instructs the cart which direction to go at an intersection (no wool required) to reach the endpoint on the sign.|
 | $DEF | <code>$DEF:S</code> | Default direction - This instructs the cart which direction to go at an intersection (no wool required) if no other directions are matched.|
-| $LNC | <code>$LNC:N</code> | Launches cart when spawned. Will not trigger the spawn message asking player to move in a direction.|
-| $EJT | <code>$EJT:N3</code> | Eject: extends the yellow wool block to put the player a specified number of blocks away. Can have multiple $EJT on the same sign to make more complicated ejects. Valid directions are U, D, N, S, E, W.|
+| $LNC | <code>$LNC:N</code> | Launch - launches cart when spawned. Will not trigger the spawn message asking player to move in a direction.|
+| $EJT | <code>$EJT:N3</code> | Eject - ejects extends the yellow wool block to put the player a specified number of blocks away. Can have multiple $EJT on the same sign to make more complicated ejects. Valid directions are U, D, N, S, E, W.|
+| $N or $S or $E or $W | <code>$N:E</code> | Direction - will check for carts coming from the first direction, and send them to the second direction.|
 
 
 ## Command
