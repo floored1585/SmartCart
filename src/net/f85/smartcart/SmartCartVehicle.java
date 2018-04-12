@@ -31,16 +31,12 @@ class SmartCartVehicle{
     private Location previousLocation;
     private int[] currentRoughLocation;
     private int[] previousRoughLocation;
-    //private SmartCart plugin;
-    //private String signText;
     private int emptyCartTimer = 0;
     // Settables
     private double configSpeed = SmartCart.config.getDouble("normal_cart_speed");
     String configEndpoint = "";
 
     SmartCartVehicle(Minecart vehicle){
-        //SmartCartVehicle(SmartCart plugin, Minecart vehicle) {
-        //this.plugin = plugin;
         cart = vehicle;
         cart.setMaxSpeed(SmartCart.config.getDouble("max_cart_speed"));
     }
@@ -62,15 +58,9 @@ class SmartCartVehicle{
     private void setConfigSpeed(Double speed) {
         configSpeed = speed;
     }
-    //public String getConfigEndpoint() {
-    //    return configEndpoint;
-    //}
     private void setConfigEndpoint(String endpoint) {
         configEndpoint = endpoint;
     }
-    //public String getSignText() {
-    //    return signText;
-    //}
     void setPreviousWoolColor(DyeColor color) {
         previousWoolColor = color;
     }
@@ -271,7 +261,6 @@ class SmartCartVehicle{
                 if (isLeavingBlock()) {
                     Entity passenger = cart.getPassengers().get(0);
                     remove(true);
-                    //add code for checking for $EJT signs
                     Block block1 = getCart().getLocation().add(0, -2, 0).getBlock();
                     Block block2 = getCart().getLocation().add(1, -1, 0).getBlock();
                     Block block3 = getCart().getLocation().add(-1, -1, 0).getBlock();
