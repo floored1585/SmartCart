@@ -6,14 +6,12 @@
 //
 package net.f85.smartcart;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
+import org.bukkit.material.Wool;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,12 +100,12 @@ class SmartCartUtil {
 
 
     private boolean isElevatorBlock(Block block) {
-        return isControlBlock(block) && (block.getState().getData().toString().contains("WOOL") && block.getState().getData().toString().contains("RED"));
+        return isControlBlock(block) && (block.getState().getData() instanceof Wool && ((Wool)block.getState().getData()).getColor() == DyeColor.RED);
     }
 
 
     boolean isSpawnBlock(Block block) {
-        return isControlBlock(block) && (block.getState().getData().toString().contains("WOOL") && block.getState().getData().toString().contains("BLACK"));
+        return isControlBlock(block) && (block.getState().getData() instanceof Wool && ((Wool)block.getState().getData()).getColor() == DyeColor.BLACK);
     }
 
 

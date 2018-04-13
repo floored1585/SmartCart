@@ -15,6 +15,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.*;
+import org.bukkit.material.Wool;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -251,12 +252,13 @@ class SmartCartVehicle{
         }
 
         Block block = getBlockBeneath();
-        if (block.getState().getData().toString().contains("WOOL")) {
-            if (block.getState().getData().toString().contains("ORANGE")) {
+        if (block.getState().getData() instanceof Wool) {
+            Wool wool = (Wool)block.getState().getData();
+            if (wool.getColor() == DyeColor.ORANGE) {
                 setPreviousWoolColor(DyeColor.ORANGE);
                 setSpeed(SmartCart.config.getDouble("slow_cart_speed"));
             }
-            if (block.getState().getData().toString().contains("YELLOW")) {
+            if (wool.getColor() == DyeColor.YELLOW) {
                 // If the cart is near the center of the block, kill it.  Otherwise, slow it down.
                 if (isLeavingBlock()) {
                     Entity passenger = cart.getPassengers().get(0);
@@ -301,7 +303,7 @@ class SmartCartVehicle{
             } else {
                 setSpeed(0.1D);
             }
-            if (block.getState().getData().toString().contains("GREEN")) {
+            if (wool.getColor() == DyeColor.GREEN) {
                 //   If we have already executed this block and ARE moving, teleport the cart
                 //   in the direction the player is facing.
                 if (getPreviousWoolColor() == DyeColor.GREEN) {
@@ -327,7 +329,7 @@ class SmartCartVehicle{
                     setSpeed(0.1D);
                 }
             }
-            if (block.getState().getData().toString().contains("RED")) {
+            if (wool.getColor() == DyeColor.RED) {
                 // If we're not half way through the block, return
                 if (!isLeavingBlock()) {
                     setSpeed(0.1D);
