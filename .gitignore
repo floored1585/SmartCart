@@ -16,4 +16,5 @@ spigot.yml
 /world/*
 /world_nether/*
 /world_the_end/*
+/.idea/*
 usercache.json
