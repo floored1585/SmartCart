@@ -1,2 +1,3 @@
 build/net
 *.swp
+/.idea/*
