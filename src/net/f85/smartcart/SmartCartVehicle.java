@@ -487,7 +487,7 @@ class SmartCartVehicle{
         return getCart() instanceof StorageMinecart;
     }
 
-    static List<Pair<String, String>> parseSign(Sign sign){
+    private static List<Pair<String, String>> parseSign(Sign sign){
         List<Pair<String, String>> ret = new ArrayList<>();
         StringBuilder stringBuilder = new StringBuilder();
         for( String value : sign.getLines() ) { // Merge all the sign's lines
@@ -567,7 +567,11 @@ class SmartCartVehicle{
                 vector = new Vector(-1, 0, 0);
                 break;
         }
+<<<<<<< HEAD
         if(SmartCart.util.isRail(blockAhead)){
+=======
+        if(smartcart.util.isRail(blockAhead)){
+>>>>>>> ea28ad648390cc48b93d0d7257fe51526557a965
             oldCart.cart.setVelocity(new Vector(0, 0, 0));
             if(blockAhead != null) oldCart.cart.teleport(blockAhead.getLocation());
             oldCart.cart.setVelocity(vector);

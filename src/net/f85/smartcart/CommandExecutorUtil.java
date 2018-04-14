@@ -1,4 +1,3 @@
-//
 // SmartCart copyright 2015 Ian Clark
 //
 // Distributed under the MIT License
