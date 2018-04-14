@@ -1,5 +1,5 @@
 //
-// SmartCart copyright 2015 Ian Clark
+// smartcart copyright 2015 Ian Clark
 //
 // Distributed under the MIT License
 // http://opensource.org/licenses/MIT
@@ -35,7 +35,7 @@ public class CommandExecutorUtil implements CommandExecutor {
 
         if (!cmd.getName().equalsIgnoreCase("sc")) return false;
         if (!(sender instanceof Player)) {
-            sender.sendMessage("SmartCart console control not yet implemented :(");
+            sender.sendMessage("smartcart console control not yet implemented :(");
             return true;
         }
 

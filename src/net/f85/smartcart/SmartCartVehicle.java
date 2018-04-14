@@ -1,5 +1,5 @@
 //
-// SmartCart copyright 2015 Ian Clark
+// smartcart copyright 2015 Ian Clark
 //
 // Distributed under the MIT License
 // http://opensource.org/licenses/MIT
@@ -451,7 +451,7 @@ class SmartCartVehicle{
     }
 
     private void sendPassengerMessage(String message, boolean prefix){
-        if(prefix) message = "§6[SmartCart] §7" + message;
+        if(prefix) message = "§6[smartcart] §7" + message;
         else message = "§7" + message;
         Entity entity = getPassenger();
         if(entity instanceof Player){
@@ -487,7 +487,7 @@ class SmartCartVehicle{
         return getCart() instanceof StorageMinecart;
     }
 
-    static List<Pair<String, String>> parseSign(Sign sign){
+    private static List<Pair<String, String>> parseSign(Sign sign){
         List<Pair<String, String>> ret = new ArrayList<>();
         StringBuilder stringBuilder = new StringBuilder();
         for( String value : sign.getLines() ) { // Merge all the sign's lines
@@ -567,7 +567,7 @@ class SmartCartVehicle{
                 vector = new Vector(-1, 0, 0);
                 break;
         }
-        if(SmartCart.util.isRail(blockAhead)){
+        if(smartcart.util.isRail(blockAhead)){
             oldCart.cart.setVelocity(new Vector(0, 0, 0));
             if(blockAhead != null) oldCart.cart.teleport(blockAhead.getLocation());
             oldCart.cart.setVelocity(vector);

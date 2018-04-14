@@ -1,5 +1,5 @@
 //
-// SmartCart copyright 2015 Ian Clark
+// smartcart copyright 2015 Ian Clark
 //
 // Distributed under the MIT License
 // http://opensource.org/licenses/MIT
@@ -22,7 +22,7 @@ public class SmartCart extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        getLogger().info("Starting up SmartCart");
+        getLogger().info("Starting up smartcart");
         //plugin = this;
 
         // Generate the default config file
@@ -40,12 +40,12 @@ public class SmartCart extends JavaPlugin {
         this.getCommand("sc").setExecutor(new CommandExecutorUtil(this));
         this.getCommand("scSetTag").setExecutor(new CommandSetTag());
         getLogger().info("done");
-        getLogger().info("Successfully activated SmartCart");
+        getLogger().info("Successfully activated smartcart");
     }
 
 
     @Override
     public void onDisable() {
-        getLogger().info("Successfully deactivated SmartCart");
+        getLogger().info("Successfully deactivated smartcart");
     }
 }

@@ -1,5 +1,5 @@
 //
-// SmartCart copyright 2015 Ian Clark
+// smartcart copyright 2015 Ian Clark
 //
 // Distributed under the MIT License
 // http://opensource.org/licenses/MIT
@@ -132,7 +132,7 @@ class SmartCartUtil {
 
     // Send a message to the player
     void sendMessage(Entity entity, String message) {
-        message = "§6[SmartCart] §7" + message;
+        message = "§6[smartcart] §7" + message;
         if (entity instanceof Player) {
             ((Player) entity).sendRawMessage(message);
         }
