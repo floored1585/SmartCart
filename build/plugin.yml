@@ -1,10 +1,10 @@
-name: SmartCart
+name: smartcart
 version: 0.1.6
 description: A minecart transportation plugin!
 author: floored1585
 load: startup
-main: net.f85.SmartCart.SmartCart
+main: net.f85.smartcart.smartcart
 commands:
         sc:
                 permission: op
-                description: SmartCart Control
+                description: smartcart Control
