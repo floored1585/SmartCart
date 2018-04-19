@@ -1,2 +1,5 @@
 build/net
 *.swp
+/.idea/*
+/META-INF/*
+SmartCart.iml
