@@ -126,7 +126,7 @@ class SmartCartVehicle{
 
     // Returns true only if cart is in a rail block
     boolean isNotOnRail() {
-        return getCart().getLocation().getBlock().getType() != Material.RAILS;
+        return getCart().getLocation().getBlock().getType() != Material.RAIL;
     }
 
 

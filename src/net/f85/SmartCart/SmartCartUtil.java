@@ -6,8 +6,6 @@
 //
 package net.f85.SmartCart;
 
-import net.f85.SmartCart.SmartCart;
-import net.f85.SmartCart.SmartCartVehicle;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -97,7 +95,7 @@ class SmartCartUtil {
 
     boolean isControlBlock(Block block) {
         Block blockAbove = block.getLocation().add(0,1,0).getBlock();
-        return (block.getType() == Material.WOOL && blockAbove.getType() == Material.RAILS);
+        return (isWool(block) && isRail(blockAbove));
     }
 
 
@@ -218,7 +216,27 @@ class SmartCartUtil {
 
 
     boolean isRail(Block block) {
-        return block != null && block.getType() == Material.RAILS;
+        return block != null && block.getType() == Material.RAIL;
+    }
+
+    boolean isWool(Block block){
+        return block != null && (
+                block.getType() == Material.RED_WOOL
+                        || block.getType() == Material.ORANGE_WOOL
+                        || block.getType() == Material.YELLOW_WOOL
+                        || block.getType() == Material.LIME_WOOL
+                        || block.getType() == Material.GREEN_WOOL
+                        || block.getType() == Material.CYAN_WOOL
+                        || block.getType() == Material.BLUE_WOOL
+                        || block.getType() == Material.PURPLE_WOOL
+                        || block.getType() == Material.MAGENTA_WOOL
+                        || block.getType() == Material.PINK_WOOL
+                        || block.getType() == Material.BROWN_WOOL
+                        || block.getType() == Material.WHITE_WOOL
+                        || block.getType() == Material.LIGHT_GRAY_WOOL
+                        || block.getType() == Material.GRAY_WOOL
+                        || block.getType() == Material.BLACK_WOOL
+                        || block.getType() == Material.LIGHT_BLUE_WOOL);
     }
 
 
@@ -295,6 +313,6 @@ class SmartCartUtil {
     }
 
     boolean isSign(Block block){
-        return block.getType() == Material.SIGN || block.getType() == Material.SIGN_POST || block.getType() == Material.WALL_SIGN;
+        return block.getType() == Material.SIGN || block.getType() == Material.WALL_SIGN;
     }
 }
