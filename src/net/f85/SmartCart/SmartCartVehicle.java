@@ -6,7 +6,6 @@
 //
 package net.f85.SmartCart;
 
-import net.f85.SmartCart.SmartCart;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
