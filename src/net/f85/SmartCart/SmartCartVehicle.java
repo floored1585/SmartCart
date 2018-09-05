@@ -476,10 +476,6 @@ class SmartCartVehicle{
         return getCart() instanceof PoweredMinecart;
     }
 
-    //private boolean isRideableMinecart() {
-    //    return getCart() instanceof RideableMinecart;
-    //}
-
     private boolean isSpawnerMinecart() {
         return  getCart() instanceof SpawnerMinecart;
     }
@@ -545,41 +541,6 @@ class SmartCartVehicle{
             oldCart.transferSettings(newSC);
         }
     }
-
-    /*
-    private static void moveCartToNewDirection(SmartCartVehicle oldCart, String direction){
-        Block blockAhead = null;
-        Vector vector = new Vector(0, 0, 0);
-        switch (direction) {
-            case "N":
-                blockAhead = oldCart.cart.getLocation().add(0D, 0D, -1D).getBlock();
-                vector = new Vector(0, 0, -1);
-                break;
-            case "S":
-                blockAhead = oldCart.cart.getLocation().add(0D, 0D, 1D).getBlock();
-                vector = new Vector(0, 0, 1);
-                break;
-            case "E":
-                blockAhead = oldCart.cart.getLocation().add(1D, 0D, 0D).getBlock();
-                vector = new Vector(1, 0, 0);
-                break;
-            case "W":
-                blockAhead = oldCart.cart.getLocation().add(-1D, 0D, 0D).getBlock();
-                vector = new Vector(-1, 0, 0);
-                break;
-        }
-<<<<<<< HEAD
-        if(SmartCart.util.isRail(blockAhead)){
-=======
-        if(smartcart.util.isRail(blockAhead)){
->>>>>>> ea28ad648390cc48b93d0d7257fe51526557a965
-            oldCart.cart.setVelocity(new Vector(0, 0, 0));
-            if(blockAhead != null) oldCart.cart.teleport(blockAhead.getLocation());
-            oldCart.cart.setVelocity(vector);
-        }
-
-    }
-    */
 
     private void executeSign(Block block) {
         if (isNotOnRail()) {
