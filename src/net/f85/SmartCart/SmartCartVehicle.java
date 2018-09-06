@@ -634,20 +634,6 @@ class SmartCartVehicle{
                     transferSettings(newSC);
                 }
             }
-            /*
-            if (pair.left().equals("$PAS")) {
-                if (isRideableMinecart()) spawnCartInNewDirection(this, pair.right());
-            }
-            if(pair.left().equals("$POW")) {
-                if (isPoweredMinecart()) moveCartToNewDirection(this, pair.right());
-            }
-            if(pair.left().equals("$HOP")) {
-                if (isHopperMinecart()) moveCartToNewDirection(this, pair.right());
-            }
-            if(pair.left().equals("$TNT")) {
-                if(isExplosiveMinecart()) moveCartToNewDirection(this, pair.right());
-            }
-            */
         }
     }
 

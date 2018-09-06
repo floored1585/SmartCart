@@ -126,8 +126,22 @@ public class SmartCartListener implements Listener {
 
         // Function takes a location, radius, and material to search for -- get all command blocks
         int search_radius = 1;
-        ArrayList<Block> cmdBlockList = net.f85.SmartCart.SmartCart.util.getBlocksNearby(event.getBlock(), search_radius, Material.WOOL);
-
+        ArrayList<Block> cmdBlockList = net.f85.SmartCart.SmartCart.util.getBlocksNearby(event.getBlock(), search_radius, Material.RED_WOOL);
+        cmdBlockList.addAll(net.f85.SmartCart.SmartCart.util.getBlocksNearby(event.getBlock(), search_radius, Material.ORANGE_WOOL));
+        cmdBlockList.addAll(net.f85.SmartCart.SmartCart.util.getBlocksNearby(event.getBlock(), search_radius, Material.YELLOW_WOOL));
+        cmdBlockList.addAll(net.f85.SmartCart.SmartCart.util.getBlocksNearby(event.getBlock(), search_radius, Material.LIME_WOOL));
+        cmdBlockList.addAll(net.f85.SmartCart.SmartCart.util.getBlocksNearby(event.getBlock(), search_radius, Material.GREEN_WOOL));
+        cmdBlockList.addAll(net.f85.SmartCart.SmartCart.util.getBlocksNearby(event.getBlock(), search_radius, Material.CYAN_WOOL));
+        cmdBlockList.addAll(net.f85.SmartCart.SmartCart.util.getBlocksNearby(event.getBlock(), search_radius, Material.LIGHT_BLUE_WOOL));
+        cmdBlockList.addAll(net.f85.SmartCart.SmartCart.util.getBlocksNearby(event.getBlock(), search_radius, Material.BLUE_WOOL));
+        cmdBlockList.addAll(net.f85.SmartCart.SmartCart.util.getBlocksNearby(event.getBlock(), search_radius, Material.PURPLE_WOOL));
+        cmdBlockList.addAll(net.f85.SmartCart.SmartCart.util.getBlocksNearby(event.getBlock(), search_radius, Material.MAGENTA_WOOL));
+        cmdBlockList.addAll(net.f85.SmartCart.SmartCart.util.getBlocksNearby(event.getBlock(), search_radius, Material.PINK_WOOL));
+        cmdBlockList.addAll(net.f85.SmartCart.SmartCart.util.getBlocksNearby(event.getBlock(), search_radius, Material.BROWN_WOOL));
+        cmdBlockList.addAll(net.f85.SmartCart.SmartCart.util.getBlocksNearby(event.getBlock(), search_radius, Material.WHITE_WOOL));
+        cmdBlockList.addAll(net.f85.SmartCart.SmartCart.util.getBlocksNearby(event.getBlock(), search_radius, Material.LIGHT_GRAY_WOOL));
+        cmdBlockList.addAll(net.f85.SmartCart.SmartCart.util.getBlocksNearby(event.getBlock(), search_radius, Material.GRAY_WOOL));
+        cmdBlockList.addAll(net.f85.SmartCart.SmartCart.util.getBlocksNearby(event.getBlock(), search_radius, Material.BLACK_WOOL));
         // Return if we didn't find any command blocks
         if (cmdBlockList.size() == 0) {
             return;
