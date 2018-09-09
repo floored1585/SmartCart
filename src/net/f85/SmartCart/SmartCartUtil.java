@@ -6,300 +6,313 @@
 //
 package net.f85.SmartCart;
 
-import net.f85.SmartCart.*;
 import org.bukkit.*;
-import org.bukkit.block.*;
-import org.bukkit.material.*;
-import org.bukkit.entity.*;
-import java.util.*;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Minecart;
+import org.bukkit.entity.Player;
+import org.bukkit.material.Wool;
 
-public class SmartCartUtil {
+import java.util.ArrayList;
+import java.util.List;
 
-  private ArrayList<SmartCartVehicle> cartList = new ArrayList<SmartCartVehicle>();
-  private SmartCart plugin;
+class SmartCartUtil {
 
+    private ArrayList<SmartCartVehicle> cartList = new ArrayList<>();
+    private net.f85.SmartCart.SmartCart plugin;
 
-  public SmartCartUtil(SmartCart plugin) {
-    this.plugin = plugin;
-  }
-
-
-  // Accessors!
-  public ArrayList<SmartCartVehicle> getCartList() {
-    return new ArrayList<SmartCartVehicle>(cartList);
-  }
-
-
-  public int CartListSize() {
-    return cartList.size();
-  }
-
-
-  // This returns an ArrayList of all carts in the provided world
-  public ArrayList<SmartCartVehicle> getCartList(World world) {
-
-    // This is where the carts we find, if any, will go
-    ArrayList<SmartCartVehicle> worldCarts = new ArrayList<SmartCartVehicle>();
-
-    // Loop through all carts, saving the ones that match 
-    for (SmartCartVehicle cart : cartList) {
-      if (cart.getLocation().getWorld() == world) {
-        worldCarts.add(cart);
-      }
+    SmartCartUtil(SmartCart plugin) {
+        this.plugin = plugin;
     }
 
-    return worldCarts;
-  }
 
-
-  public SmartCartVehicle getCartFromList(Minecart requestedCart) {
-
-    // Search for an existing SmartCartVehicle first
-    for (SmartCartVehicle cart : cartList) {
-      if (cart.getEntityId() == requestedCart.getEntityId()) {
-        return cart;
-      }
+    // Accessors!
+    ArrayList<SmartCartVehicle> getCartList() {
+        return new ArrayList<>(cartList);
     }
 
-    // If the cart doesn't already exist as a SmartCartVehicle, create it
-    SmartCartVehicle newCart = new SmartCartVehicle(requestedCart);
-    cartList.add(newCart);
-    return newCart;
-  }
 
-  public SmartCartVehicle getCartFromList(int entityID) {
-    // Search for an existing SmartCartVehicle first
-    for (SmartCartVehicle cart : cartList) {
-      if (cart.getEntityId() == entityID) {
-        return cart;
-      }
-    }
-    return null;
-  }
+    // This returns an ArrayList of all carts in the provided world
+    ArrayList<SmartCartVehicle> getCartList(World world) {
 
+        // This is where the carts we find, if any, will go
+        ArrayList<SmartCartVehicle> worldCarts = new ArrayList<>();
 
-  // Find & remove the cart from cartList
-  public void removeCart(SmartCartVehicle deadCart) {
-    // Find the cart that is being removed
-    for (SmartCartVehicle cart : cartList) {
-      if (cart.getEntityId() == deadCart.getEntityId()) {
-        cartList.remove(cart);
-        break;
-      }
-    }
-  }
-
-  public void killCarts(ArrayList<SmartCartVehicle> removeCartList) {
-    for (SmartCartVehicle cart : removeCartList) {
-      cart.remove(true);
-    }
-  }
-
-
-  public boolean isControlBlock(Block block) {
-    Block blockAbove = block.getLocation().add(0,1,0).getBlock();
-    return (block.getType() == Material.WOOL && blockAbove.getType() == Material.RAILS);
-  }
-
-
-  public boolean isElevatorBlock(Block block) {
-    return isControlBlock(block) && (new Wool(block.getType(), block.getData())).getColor() == DyeColor.RED;
-  }
-
-
-  public boolean isSpawnBlock(Block block) {
-    return isControlBlock(block) && ( new Wool(block.getType(), block.getData()) ).getColor() == DyeColor.BLACK;
-  }
-
-
-  // This searches methodically through a cube with a side length of (radius * 2 + 1)
-  //   for the material passed.  Returns an ArrayList of Blocks containing all matching
-  //   material found
-  public ArrayList<Block> getBlocksNearby(Block centerBlock, int radius, Material material) {
-
-    ArrayList<Block> blockList = new ArrayList<Block>();
-
-    for (double xOffset = radius; xOffset >= radius * -1; xOffset--) {
-      for (double yOffset = radius; yOffset >= radius * -1; yOffset--) {
-        for (double zOffset = radius; zOffset >= radius * -1; zOffset--) {
-          Block testBlock = centerBlock.getLocation().add(xOffset, yOffset, zOffset).getBlock();
-          if (testBlock.getType() == material) {
-            blockList.add(testBlock);
-          }
+        // Loop through all carts, saving the ones that match
+        for (SmartCartVehicle cart : cartList) {
+            if (cart.getLocation().getWorld() == world) {
+                worldCarts.add(cart);
+            }
         }
-      }
-    }
-    return blockList;
-  }
 
-
-  // Send a message to the player
-  public void sendMessage(Entity entity, String message) {
-    message = "§6[SmartCart] " + message;
-    if (entity instanceof Player) {
-      ((Player) entity).sendRawMessage(message);
-    }
-  }
-
-
-  // This method returns a delineated list of the worlds on the server
-  public String getWorldList(String separator) {
-
-    List<World> worldList = Bukkit.getWorlds();
-    String list = "";
-    int counter = 1;
-
-    for (World world : worldList) {
-      list += world.getName();
-      // If we still have more worlds to add, insert separator
-      if (worldList.size() > counter) {
-        list += separator;
-      }
-      counter += 1;
+        return worldCarts;
     }
 
-    return list;
-  }
 
+    SmartCartVehicle getCartFromList(Minecart requestedCart) {
 
-  // Send the provided list of carts to the provided entity
-  public void sendCartList(ArrayList<SmartCartVehicle> sendCartList, Entity entity) {
+        // Search for an existing SmartCartVehicle first
+        for (SmartCartVehicle cart : cartList) {
+            if (cart.getEntityId() == requestedCart.getEntityId()) {
+                return cart;
+            }
+        }
 
-    // These values are used to format the columns
-    int padID = 7;
-    int padWorld = 10;
-    int padLocation = 18;
-    int padPassenger = 20;
-    int padAge = 5;
-
-    String message = "\n"
-      + padRight("ID", padID)
-      + padRight("World", padWorld)
-      + padRight("Location", padLocation)
-      + padRight("Passenger", padPassenger)
-      + padRight("Age", padAge)
-      + "\n";
-
-    for (SmartCartVehicle cart : sendCartList) {
-      message += ""
-        + padRight(Integer.toString(cart.getEntityId()), padID)
-        + padRight(cart.getLocation().getWorld().getName(), padWorld)
-        + padRight(getLocationString(cart.getLocation()), padLocation)
-        + padRight(cart.getPassengerName(), padPassenger)
-        + padRight(getAgeString((Entity) cart.getCart()), padAge)
-        + "\n";
+        // If the cart doesn't already exist as a SmartCartVehicle, create it
+        SmartCartVehicle newCart = new SmartCartVehicle(requestedCart);
+        cartList.add(newCart);
+        return newCart;
     }
-    message += "Total: " + Integer.toString(sendCartList.size());
 
-    sendMessage(entity, message);
-  }
-
-
-  public static String padRight(String s, int n) {
-    return String.format("%1$-" + n + "s", s);  
-  }
-
-  public static String padLeft(String s, int n) {
-    return String.format("%1$" + n + "s", s);  
-  }
-
-
-  public String getLocationString(Location loc) {
-    return Integer.toString( loc.getBlockX() ) + ","
-      + Integer.toString( loc.getBlockY() ) + ","
-      + Integer.toString( loc.getBlockZ() );
-  }
-
-
-  public String getAgeString(Entity entity) {
-    int ticks = entity.getTicksLived();
-    int seconds = ticks / 20;
-    return String.format("%d:%02d", seconds/60, seconds%60);
-  }
-
-
-  public boolean isRail(Block block) {
-    if (block == null) {
-      return false;
+    SmartCartVehicle getCartFromList(int entityID) {
+        // Search for an existing SmartCartVehicle first
+        for (SmartCartVehicle cart : cartList) {
+            if (cart.getEntityId() == entityID) {
+                return cart;
+            }
+        }
+        return null;
     }
-    if (block.getType() == Material.RAILS) {
-      return true;
+
+
+    // Find & remove the cart from cartList
+    void removeCart(SmartCartVehicle deadCart) {
+        // Find the cart that is being removed
+        for (SmartCartVehicle cart : cartList) {
+            if (cart.getEntityId() == deadCart.getEntityId()) {
+                cartList.remove(cart);
+                break;
+            }
+        }
     }
-    return false;
-  }
 
-
-  public boolean isRail(Location loc) {
-    return isRail(loc.getBlock());
-  }
-
-
-  // Checks to see if a string is really an integer!
-  public static boolean isInteger(String str) {
-    if (str == null) {
-      return false;
+    void killCarts(ArrayList<SmartCartVehicle> removeCartList) {
+        for (SmartCartVehicle cart : removeCartList) {
+            cart.remove(true);
+        }
     }
-    int length = str.length();
-    if (length == 0) {
-      return false;
+
+
+    boolean isControlBlock(Block block) {
+        Block blockAbove = block.getLocation().add(0,1,0).getBlock();
+        return (isWool(block) && isRail(blockAbove));
     }
-    int i = 0;
-    if (str.charAt(0) == '-') {
-      if (length == 1) {
-        return false;
-      }
-      i = 1;
+
+
+    private boolean isElevatorBlock(Block block) {
+        return isControlBlock(block) && (block.getState().getData() instanceof Wool && ((Wool)block.getState().getData()).getColor() == DyeColor.RED);
     }
-    for (; i < length; i++) {
-      char c = str.charAt(i);
-      if (c <= '/' || c >= ':') {
-        return false;
-      }
+
+
+    boolean isSpawnBlock(Block block) {
+        return isControlBlock(block) && (block.getState().getData() instanceof Wool && ((Wool)block.getState().getData()).getColor() == DyeColor.BLACK);
     }
-    return true;
-  }
 
 
-  public Minecart getCartAtBlock(Block block) {
-    for (Entity entity : block.getLocation().getChunk().getEntities() ) {
-      // If the entity is a minecart and on the location of the block passed, return the cart
-      if (entity instanceof Minecart
-          && entity.getLocation().getBlockX() == block.getLocation().getX()
-          && entity.getLocation().getBlockY() == block.getLocation().getY()
-          && entity.getLocation().getBlockZ() == block.getLocation().getZ() )
-      {
-        return (Minecart)entity;
-      }
+    // This searches methodically through a cube with a side length of (radius * 2 + 1)
+    //   for the material passed.  Returns an ArrayList of Blocks containing all matching
+    //   material found
+    ArrayList<Block> getBlocksNearby(Block centerBlock, int radius, Material material) {
+
+        ArrayList<Block> blockList = new ArrayList<>();
+
+        for (double xOffset = radius; xOffset >= radius * -1; xOffset--) {
+            for (double yOffset = radius; yOffset >= radius * -1; yOffset--) {
+                for (double zOffset = radius; zOffset >= radius * -1; zOffset--) {
+                    Block testBlock = centerBlock.getLocation().add(xOffset, yOffset, zOffset).getBlock();
+                    if (testBlock.getType() == material) {
+                        blockList.add(testBlock);
+                    }
+                }
+            }
+        }
+        return blockList;
     }
-    return null;
-  }
 
 
-  public SmartCartVehicle spawnCart(Block block) {
-    // Check to make sure the block is a rail and no cart already exists here
-    Minecart cartAtBlock = getCartAtBlock(block);
-    if ( isRail(block) && cartAtBlock == null ) {
-      Location loc = block.getLocation().add(0.5D,0D,0.5D);
-      Minecart cart = loc.getWorld().spawn(loc, Minecart.class);
-      return getCartFromList(cart);
+    // Send a message to the player
+    void sendMessage(Entity entity, String message) {
+        message = "§6[SmartCart] §7" + message;
+        if (entity instanceof Player) {
+            ((Player) entity).sendRawMessage(message);
+        }
     }
-    return getCartFromList(cartAtBlock);
-  }
 
 
-  public Block getElevatorBlock(Location loc) {
-    Location cmdLoc = loc.clone();
-    for (int y = 0; y < 256; y++) {
-      if (y == cmdLoc.getBlockY()) {
-        continue;
-      }
-      loc.setY(y);
-      if (isElevatorBlock( loc.getBlock() )) {
-        return loc.getBlock();
-      }
+    // This method returns a delineated list of the worlds on the server
+    String getWorldList(String separator) {
+
+        List<World> worldList = Bukkit.getWorlds();
+        StringBuilder stringBuilder = new StringBuilder();
+        int counter = 1;
+
+        for (World world : worldList) {
+            stringBuilder.append(world.getName());
+            // If we still have more worlds to add, insert separator
+            if (worldList.size() > counter) {
+                stringBuilder.append(separator);
+            }
+            counter += 1;
+        }
+        return stringBuilder.toString();
     }
-    return null;
-  }
 
 
+    // Send the provided list of carts to the provided entity
+    void sendCartList(ArrayList<SmartCartVehicle> sendCartList, Entity entity) {
+
+        // These values are used to format the columns
+        int padID = 7;
+        int padWorld = 10;
+        int padLocation = 18;
+        int padPassenger = 20;
+        int padAge = 5;
+
+        String message = "\n"
+                + padRight("ID", padID)
+                + padRight("World", padWorld)
+                + padRight("Location", padLocation)
+                + padRight("Passenger", padPassenger)
+                + padRight("Age", padAge)
+                + "\n";
+        StringBuilder stringBuilder = new StringBuilder();
+        for (SmartCartVehicle cart : sendCartList) {
+            stringBuilder.
+                    append(padRight(Integer.toString(cart.getEntityId()), padID)).
+                    append(padRight(cart.getLocation().getWorld().getName(), padWorld)).
+                    append(padRight(getLocationString(cart.getLocation()), padLocation)).
+                    append(padRight(cart.getPassengerName(), padPassenger)).
+                    append(padRight(getAgeString(cart.getCart()), padAge)).
+                    append("\n");
+        }
+        message += stringBuilder.toString();
+        message += "Total: " + Integer.toString(sendCartList.size());
+
+        sendMessage(entity, message);
+    }
+
+
+    private static String padRight(String s, int n) {
+        return String.format("%1$-" + n + "s", s);
+    }
+
+    //public static String padLeft(String s, int n) {
+    //    return String.format("%1$" + n + "s", s);
+    //}
+
+
+    private String getLocationString(Location loc) {
+        return Integer.toString( loc.getBlockX() ) + ","
+                + Integer.toString( loc.getBlockY() ) + ","
+                + Integer.toString( loc.getBlockZ() );
+    }
+
+
+    private String getAgeString(Entity entity) {
+        int ticks = entity.getTicksLived();
+        int seconds = ticks / 20;
+        return String.format("%d:%02d", seconds/60, seconds%60);
+    }
+
+
+    boolean isRail(Block block) {
+        return block != null && block.getType() == Material.RAIL;
+    }
+
+    boolean isWool(Block block){
+        return block != null && (
+                block.getType() == Material.RED_WOOL
+                        || block.getType() == Material.ORANGE_WOOL
+                        || block.getType() == Material.YELLOW_WOOL
+                        || block.getType() == Material.LIME_WOOL
+                        || block.getType() == Material.GREEN_WOOL
+                        || block.getType() == Material.CYAN_WOOL
+                        || block.getType() == Material.BLUE_WOOL
+                        || block.getType() == Material.PURPLE_WOOL
+                        || block.getType() == Material.MAGENTA_WOOL
+                        || block.getType() == Material.PINK_WOOL
+                        || block.getType() == Material.BROWN_WOOL
+                        || block.getType() == Material.WHITE_WOOL
+                        || block.getType() == Material.LIGHT_GRAY_WOOL
+                        || block.getType() == Material.GRAY_WOOL
+                        || block.getType() == Material.BLACK_WOOL
+                        || block.getType() == Material.LIGHT_BLUE_WOOL);
+    }
+
+
+    //public boolean isRail(Location loc) {
+    //   return isRail(loc.getBlock());
+    //}
+
+
+    // Checks to see if a string is really an integer!
+    static boolean isInteger(String str) {
+        if (str == null) {
+            return false;
+        }
+        int length = str.length();
+        if (length == 0) {
+            return false;
+        }
+        int i = 0;
+        if (str.charAt(0) == '-') {
+            if (length == 1) {
+                return false;
+            }
+            i = 1;
+        }
+        for (; i < length; i++) {
+            char c = str.charAt(i);
+            if (c <= '/' || c >= ':') {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    private Minecart getCartAtBlock(Block block) {
+        for (Entity entity : block.getLocation().getChunk().getEntities() ) {
+            // If the entity is a minecart and on the location of the block passed, return the cart
+            if (entity instanceof Minecart
+                    && entity.getLocation().getBlockX() == block.getLocation().getX()
+                    && entity.getLocation().getBlockY() == block.getLocation().getY()
+                    && entity.getLocation().getBlockZ() == block.getLocation().getZ() )
+            {
+                return (Minecart)entity;
+            }
+        }
+        return null;
+    }
+
+
+    SmartCartVehicle spawnCart(Block block) {
+        // Check to make sure the block is a rail and no cart already exists here
+        Minecart cartAtBlock = getCartAtBlock(block);
+        if ( isRail(block) && cartAtBlock == null ) {
+            Location loc = block.getLocation().add(0.5D,0D,0.5D);
+            Minecart cart = loc.getWorld().spawn(loc, Minecart.class);
+            return getCartFromList(cart);
+        }
+        return getCartFromList(cartAtBlock);
+    }
+
+
+    Block getElevatorBlock(Location loc) {
+        Location cmdLoc = loc.clone();
+        for (int y = 0; y < 256; y++) {
+            if (y == cmdLoc.getBlockY()) {
+                continue;
+            }
+            loc.setY(y);
+            if (isElevatorBlock( loc.getBlock() )) {
+                return loc.getBlock();
+            }
+        }
+        return null;
+    }
+
+    boolean isSign(Block block){
+        return block.getType() == Material.SIGN || block.getType() == Material.WALL_SIGN;
+    }
 }

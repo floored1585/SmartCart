@@ -6,49 +6,49 @@
 //
 package net.f85.SmartCart;
 
-import net.f85.SmartCart.*;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.*;
-import org.bukkit.configuration.file.*;
-import java.util.logging.*;
+import net.f85.SmartCart.CommandExecutorUtil;
+import net.f85.SmartCart.SmartCartListener;
+import net.f85.SmartCart.SmartCartUtil;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.configuration.file.FileConfiguration;
+
+import java.util.logging.Logger;
 
 public class SmartCart extends JavaPlugin {
 
 
-  public static SmartCart plugin;
-  public static SmartCartListener listener;
-  public static SmartCartUtil util;
-  public static CommandExecutorUtil commandExecutor;
-  public static Logger log;
-  public static FileConfiguration config;
+    private static SmartCartListener listener;
+    static SmartCartUtil util;
+    static FileConfiguration config;
+    static Logger logger;
 
 
-  @Override
-  public void onEnable() {
+    @Override
+    public void onEnable() {
+        getLogger().info("Starting up SmartCart");
+        //plugin = this;
 
-    plugin = this;
+        // Generate the default config file
+        this.saveDefaultConfig();
 
-    // Generate the default config file
-    plugin.saveDefaultConfig();
+        config = this.getConfig();
 
-    config = plugin.getConfig();
+        listener = new SmartCartListener(this);
+        util = new SmartCartUtil(this);
+        logger = getLogger();
 
-    listener = new SmartCartListener(this);
-    util = new SmartCartUtil(this);
-    log = getLogger();
-
-    // Set up command executor
-    commandExecutor = new CommandExecutorUtil(this);
-    Bukkit.getPluginCommand("sc").setExecutor(commandExecutor);
-
-    getLogger().info("Successfully activated SmartCart");
-  }
-
-
-  @Override
-  public void onDisable() {
-    getLogger().info("Successfully deactivated SmartCart");
-  }
+        // Set up command executor
+        //commandExecutor = new CommandExecutorUtil(this);
+        getLogger().info("Loading commands");
+        this.getCommand("sc").setExecutor(new CommandExecutorUtil(this));
+        this.getCommand("scSetTag").setExecutor(new CommandSetTag());
+        getLogger().info("done");
+        getLogger().info("Successfully activated SmartCart");
+    }
 
 
+    @Override
+    public void onDisable() {
+        getLogger().info("Successfully deactivated SmartCart");
+    }
 }
