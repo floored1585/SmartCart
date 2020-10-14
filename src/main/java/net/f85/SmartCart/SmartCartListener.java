@@ -22,8 +22,6 @@ import org.bukkit.Material;
 
 import java.util.ArrayList;
 import java.util.Set;
-import static net.f85.SmartCart.SmartCart.config;
-import static net.f85.SmartCart.SmartCart.util;
 import org.bukkit.Tag;
 
 public class SmartCartListener implements Listener {
@@ -46,7 +44,7 @@ public class SmartCartListener implements Listener {
             return;
         }
 
-        SmartCartVehicle cart = util.getCartFromList( (Minecart) vehicle );
+        SmartCartVehicle cart = SmartCart.util.getCartFromList( (Minecart) vehicle );
 
         cart.saveCurrentLocation();
         if (cart.getCart().getPassengers().isEmpty()) {
@@ -65,7 +63,7 @@ public class SmartCartListener implements Listener {
             return;
         }
 
-        if(cart.isNewBlock()) {
+        if (cart.isNewBlock()) {
             cart.readControlSign();
         }
 
@@ -95,7 +93,7 @@ public class SmartCartListener implements Listener {
             return;
         }
 
-        SmartCartVehicle cart = util.getCartFromList( (Minecart) vehicle );
+        SmartCartVehicle cart = SmartCart.util.getCartFromList( (Minecart) vehicle );
 
         // Return if minecart is marked for removal, or off rails for any reason
         if ( cart.getCart().isDead() || cart.isNotOnRail() ) {
@@ -110,7 +108,7 @@ public class SmartCartListener implements Listener {
         Vehicle vehicle = event.getVehicle();
 
         if (vehicle instanceof Minecart) {
-            util.getCartFromList( (Minecart) vehicle ).remove(false);
+            SmartCart.util.getCartFromList( (Minecart) vehicle ).remove(false);
         }
     }
 
@@ -134,7 +132,7 @@ public class SmartCartListener implements Listener {
 
         // iterate the set of wools and check each of them if they exist around the cart and store it into the BlockList
         allWools.forEach(thisWool -> {
-            cmdBlockList.addAll(util.getBlocksNearby(event.getBlock(), search_radius, thisWool));
+            cmdBlockList.addAll(SmartCart.util.getBlocksNearby(event.getBlock(), search_radius, thisWool));
         });
 
         // Return if we didn't find any command blocks
@@ -146,7 +144,7 @@ public class SmartCartListener implements Listener {
 
         // Check each of the command blocks and put spawn blocks in an arraylist
         for (Block thisBlock : cmdBlockList) {
-            if (util.isSpawnBlock(thisBlock)) {
+            if (SmartCart.util.isSpawnBlock(thisBlock)) {
                 spawnBlocks.add(thisBlock);
             }
         }
@@ -161,41 +159,30 @@ public class SmartCartListener implements Listener {
         Block block = spawnBlocks.get(0).getLocation().add(0D, 1D, 0D).getBlock();
 
         // spawn a cart
-        Minecart cart = util.spawnCart(block).getCart();
+        Minecart cart = SmartCart.util.spawnCart(block).getCart();
         if (cart == null) {
             return;
         }
 
         // pick up a nearby player
-        double r = config.getDouble("pickup_radius");
+        double r = SmartCart.config.getDouble("pickup_radius");
         for (Entity entity : cart.getNearbyEntities(r, r, r)) {
             if (entity instanceof Player && cart.getPassengers().isEmpty() && entity.getVehicle() == null) {
                 cart.addPassenger(entity);
-                SmartCartVehicle smartCart = util.getCartFromList(cart);
+                SmartCartVehicle smartCart = SmartCart.util.getCartFromList(cart);
                 boolean foundSignNearby = false;
 
                 // let's iterate all blocks around the rail and check for signs.
                 // the rail is at y = -1 relative to the cart so we go to -2 there
-                for (int x = -1; x < 2; x++) {
-                    for (int y = -2; y < 1; y++) {
-                        for (int z = -1; z < 2; z++) {
-
-                            // the 2 blocks right below the cart cannot be signs, so let's skip to speed things up
-                            if (x == 0 && z ==0 && y != -2) {
-                                continue;
-                            }
-
-                            Block thisBlock = smartCart.getCart().getLocation().add(x, y, z).getBlock();
-                            if(util.isSign(thisBlock)){
-                                foundSignNearby = true;
-                            }
-                        }
+                for (int[] nextBlock : SmartCart.nextBlocks) {
+                    Block thisBlock = smartCart.getCart().getLocation().add(nextBlock[0], nextBlock[1], nextBlock[2]).getBlock();
+                    if(SmartCart.util.isSign(thisBlock)){
+                        foundSignNearby = true;
                     }
                 }
-                if(foundSignNearby){
+                if (foundSignNearby) {
                     smartCart.executeControl();
-                }
-                else {
+                } else {
                     SmartCart.util.sendMessage(entity, "Move in the direction you wish to go.");
                 }
                 break;

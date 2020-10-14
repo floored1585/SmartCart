@@ -22,7 +22,20 @@ public class SmartCart extends JavaPlugin {
     static FileConfiguration config;
     static Logger logger;
     static boolean isDebug;
-
+    
+    // these are the block x/y/z offsets from the minecart positions that we will check
+    // for wool or sign blocks around the minecart
+    static int[][] nextBlocks = {
+            {0, -2, 0},
+            {1, -1, 0},
+            {-1, -1, 0},
+            {0, -1, 1},
+            {1, -1, -1},
+            {1, 0, 0},
+            {-1, 0, 0},
+            {0, 0, 1},
+            {0, 0, -1},
+    };
 
     @Override
     public void onEnable() {

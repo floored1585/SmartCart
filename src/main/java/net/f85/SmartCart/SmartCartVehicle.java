@@ -23,9 +23,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import static net.f85.SmartCart.SmartCart.isDebug;
+
 import static org.bukkit.Bukkit.getLogger;
-import org.bukkit.Tag;
 
 class SmartCartVehicle{
 
@@ -37,12 +36,12 @@ class SmartCartVehicle{
     private int[] previousRoughLocation;
     private int emptyCartTimer = 0;
     // Settables
-    private double configSpeed = net.f85.SmartCart.SmartCart.config.getDouble("normal_cart_speed");
+    private double configSpeed = SmartCart.config.getDouble("normal_cart_speed");
     String configEndpoint = "";
 
     SmartCartVehicle(Minecart vehicle){
         cart = vehicle;
-        cart.setMaxSpeed(net.f85.SmartCart.SmartCart.config.getDouble("max_cart_speed"));
+        cart.setMaxSpeed(SmartCart.config.getDouble("max_cart_speed"));
     }
 
 
@@ -50,6 +49,7 @@ class SmartCartVehicle{
     Minecart getCart() {
         return cart;
     }
+    
     private Location getPreviousLocation() {
         return previousLocation;
     }
@@ -135,26 +135,18 @@ class SmartCartVehicle{
 
     // Returns true if the cart is directly above a control block
     boolean isOnControlBlock() {
-        return net.f85.SmartCart.SmartCart.util.isControlBlock( getCart().getLocation().add(0D, -1D, 0D).getBlock() );
+        return SmartCart.util.isControlBlock( getCart().getLocation().add(0D, -1D, 0D).getBlock() );
     }
 
 
     // This looks two blocks below the rail for a sign. Sets the signText variable to
-    //   the sign contents if the sign is a valid control sign, otherwise "".
+    //  the sign contents if the sign is a valid control sign, otherwise "".
     void readControlSign() {
-
-        for (int x = -1; x < 2; x++) {
-            for (int y = -2; y < 1; y++) {
-                for (int z = -1; z < 2; z++) {
-
-                    // the 2 blocks right below the cart cannot be signs, so let's skip to speed things up
-                    if (x == 0 && z ==0 && y != -2) {
-                        continue;
-                    }
-
-                    Block thisBlock = getCart().getLocation().add(x, y, z).getBlock();
-                    executeSign(thisBlock);
-                }
+        for (int[] nextBlock : SmartCart.nextBlocks) {
+            Block thisBlock = getCart().getLocation().add(nextBlock[0], nextBlock[1], nextBlock[2]).getBlock();
+            
+            if (SmartCart.util.isSign(thisBlock)) {
+                executeSign(thisBlock);
             }
         }
     }
@@ -170,7 +162,7 @@ class SmartCartVehicle{
     void setSpeed(double speed) {
 
         // Check if the cart is empty, and if we should boost empty carts
-        if (getCart().isEmpty() && !net.f85.SmartCart.SmartCart.config.getBoolean("boost_empty_carts")) {
+        if (getCart().isEmpty() && !SmartCart.config.getBoolean("boost_empty_carts")) {
             return;
         }
 
@@ -213,7 +205,7 @@ class SmartCartVehicle{
         }
 
         // Remove from list of carts
-        net.f85.SmartCart.SmartCart.util.removeCart(this);
+        SmartCart.util.removeCart(this);
 
         // If we need to kill the actual cart, kill it
         if (kill) {
@@ -238,8 +230,8 @@ class SmartCartVehicle{
             Wool wool = (Wool)block.getState().getData();
             if (wool.getColor() == DyeColor.ORANGE) {
                 setPreviousWoolColor(DyeColor.ORANGE);
-                setSpeed(net.f85.SmartCart.SmartCart.config.getDouble("slow_cart_speed"));
-                if (isDebug) {
+                setSpeed(SmartCart.config.getDouble("slow_cart_speed"));
+                if (SmartCart.isDebug) {
                     getLogger().info("Orange Wool Block activated, slowing player");
                 }
             }
@@ -249,22 +241,11 @@ class SmartCartVehicle{
                     Entity passenger = cart.getPassengers().get(0);
                     remove(true);
 
-                    // let's iterate all blocks around the rail and check for signs.
-                    // the rail is at y = -1 relative to the cart so we go to -2 there
-                    for (int x = -1; x < 2; x++) {
-                        for (int y = -2; y < 1; y++) {
-                            for (int z = -1; z < 2; z++) {
-
-                                // the 2 blocks right below the cart cannot be signs, so let's skip to speed things up
-                                if (x == 0 && z ==0 && y != -2) {
-                                    continue;
-                                }
-                                Block thisBlock = getCart().getLocation().add(x, y, z).getBlock();
-                                if (net.f85.SmartCart.SmartCart.util.isSign(thisBlock)) {
-                                    executeEJT(passenger, thisBlock);
-
-                                }
-                            }
+                    // we iterate the nextBlocks line by line
+                    for (int[] nextBlock : SmartCart.nextBlocks) {
+                        Block thisBlock = getCart().getLocation().add(nextBlock[0], nextBlock[1], nextBlock[2]).getBlock();
+                        if (SmartCart.util.isSign(thisBlock)) {
+                            executeEJT(passenger, thisBlock);
                         }
                     }
                 }
@@ -278,9 +259,9 @@ class SmartCartVehicle{
                     if (isMoving() && getBlockAheadPassenger() != null) {
                         Block blockAhead = getBlockAheadPassenger();
                         Entity passenger = getCart().getPassengers().get(0);
-                        if (net.f85.SmartCart.SmartCart.util.isRail(blockAhead)) {
+                        if (SmartCart.util.isRail(blockAhead)) {
                             remove(true);
-                            SmartCartVehicle newSC = net.f85.SmartCart.SmartCart.util.spawnCart(blockAhead);
+                            SmartCartVehicle newSC = SmartCart.util.spawnCart(blockAhead);
                             newSC.getCart().addPassenger(passenger);
                             transferSettings(newSC);
                         }
@@ -312,7 +293,7 @@ class SmartCartVehicle{
 
                 // Get the tp target, destroy old cart, spawn new cart at tp target,
                 //   tp passenger, load passenger into new cart
-                Block elevator = net.f85.SmartCart.SmartCart.util.getElevatorBlock(block.getLocation());
+                Block elevator = SmartCart.util.getElevatorBlock(block.getLocation());
                 if (elevator == null) {
                     return;
                 }
@@ -325,7 +306,7 @@ class SmartCartVehicle{
                 passengerLoc.setY(tpTarget.getLocation().getBlockY());
                 // Kill the cart, spawn a new one
                 remove(true);
-                SmartCartVehicle newCart = net.f85.SmartCart.SmartCart.util.spawnCart(tpTarget);
+                SmartCartVehicle newCart = SmartCart.util.spawnCart(tpTarget);
                 // Teleport passenger to new location and load them in the cart
                 passenger.teleport(passengerLoc);
                 newCart.getCart().addPassenger(passenger);
@@ -432,7 +413,7 @@ class SmartCartVehicle{
     }
 
     private boolean isExplosiveMinecart() {
-        return  getCart() instanceof ExplosiveMinecart;
+        return getCart() instanceof ExplosiveMinecart;
     }
 
     private boolean isHopperMinecart() {
@@ -444,7 +425,7 @@ class SmartCartVehicle{
     }
 
     private boolean isSpawnerMinecart() {
-        return  getCart() instanceof SpawnerMinecart;
+        return getCart() instanceof SpawnerMinecart;
     }
 
     private boolean isStorageMinecart() {
@@ -459,7 +440,7 @@ class SmartCartVehicle{
         }
         String text = stringBuilder.toString();
         // Check to see if the sign string matches the control sign prefix; return otherwise
-        Pattern p = Pattern.compile(net.f85.SmartCart.SmartCart.config.getString("control_sign_prefix_regex"));
+        Pattern p = Pattern.compile(SmartCart.config.getString("control_sign_prefix_regex"));
         Matcher m = p.matcher(text);
         // Return if the control prefix isn't matched
         if (!m.find()) return new ArrayList<>();
@@ -476,7 +457,7 @@ class SmartCartVehicle{
     }
 
     private static void spawnCartInNewDirection(SmartCartVehicle oldCart, String direction){
-        if (isDebug) {
+        if (SmartCart.isDebug) {
             getLogger().info("Spawn block activated");
         }
         Entity passenger = null;
@@ -503,9 +484,9 @@ class SmartCartVehicle{
                 vector = new Vector(-1, 0, 0);
                 break;
         }
-        if (net.f85.SmartCart.SmartCart.util.isRail(blockAhead)) {
+        if (SmartCart.util.isRail(blockAhead)) {
             oldCart.remove(true);
-            SmartCartVehicle newSC = net.f85.SmartCart.SmartCart.util.spawnCart(blockAhead);
+            SmartCartVehicle newSC = SmartCart.util.spawnCart(blockAhead);
             newSC.getCart().addPassenger(passenger);
             newSC.getCart().setVelocity(vector);
             oldCart.transferSettings(newSC);
@@ -516,11 +497,14 @@ class SmartCartVehicle{
         if (isNotOnRail()) {
             return;
         }
-        if (isDebug) {
-            getLogger().info("Sign activated, processing command");
+        if (SmartCart.isDebug) {
+            getLogger().info("Sign activated, processing command, type is " + block.getType());
         }
         boolean foundEndpoint = false;
+
         Sign sign = (Sign) block.getState(); // Cast to Sign
+        
+        
         for (Pair<String, String> pair : parseSign(sign)) {
             Pattern p;
             if (pair.left().equals("$LNC")) {
@@ -531,7 +515,7 @@ class SmartCartVehicle{
             if (pair.left().equals("$SPD")) {
                 p = Pattern.compile("^\\d*\\.?\\d+");
                 Double minSpeed = 0D;
-                Double maxSpeed = net.f85.SmartCart.SmartCart.config.getDouble("max_cart_speed");
+                Double maxSpeed = SmartCart.config.getDouble("max_cart_speed");
                 if (!p.matcher(pair.right()).find() || Double.parseDouble(pair.right()) > maxSpeed || Double.parseDouble(pair.right()) < minSpeed) {
                     sendPassengerMessage("Bad speed value: \"" + pair.right() + "\". Must be a numeric value (decimals OK) between "
                             + minSpeed + " and " + maxSpeed + ".", true);
@@ -600,7 +584,7 @@ class SmartCartVehicle{
                         vector = new Vector(-1, 0, 0);
                         break;
                 }
-                if (net.f85.SmartCart.SmartCart.util.isRail(blockAhead)) {
+                if (SmartCart.util.isRail(blockAhead)) {
                     remove(true);
                     SmartCartVehicle newSC = SmartCart.util.spawnCart(blockAhead);
                     newSC.getCart().addPassenger(passenger);
@@ -613,7 +597,7 @@ class SmartCartVehicle{
 
     private void executeEJT(Entity passenger, Block block){
         Sign sign = (Sign) block.getState();
-        if (isDebug) {
+        if (SmartCart.isDebug) {
             getLogger().info("Yellow Wool Block activated, ejecting player");
         }
         for (Pair<String, String> pair : parseSign(sign)) {
