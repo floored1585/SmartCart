@@ -6,9 +6,6 @@
 //
 package net.f85.SmartCart;
 
-import net.f85.SmartCart.CommandExecutorUtil;
-import net.f85.SmartCart.SmartCartListener;
-import net.f85.SmartCart.SmartCartUtil;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.configuration.file.FileConfiguration;
 

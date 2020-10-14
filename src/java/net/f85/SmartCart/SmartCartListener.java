@@ -6,8 +6,6 @@
 //
 package net.f85.SmartCart;
 
-import net.f85.SmartCart.SmartCart;
-import net.f85.SmartCart.SmartCartVehicle;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Entity;
