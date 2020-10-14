@@ -15,6 +15,9 @@ import org.bukkit.material.Wool;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import static net.f85.SmartCart.SmartCart.isDebug;
+import static org.bukkit.Bukkit.getLogger;
 
 class SmartCartUtil {
 
@@ -92,7 +95,6 @@ class SmartCartUtil {
         }
     }
 
-
     boolean isControlBlock(Block block) {
         Block blockAbove = block.getLocation().add(0,1,0).getBlock();
         return (isWool(block) && isRail(blockAbove));
@@ -121,6 +123,9 @@ class SmartCartUtil {
                 for (double zOffset = radius; zOffset >= radius * -1; zOffset--) {
                     Block testBlock = centerBlock.getLocation().add(xOffset, yOffset, zOffset).getBlock();
                     if (testBlock.getType() == material) {
+                        if (isDebug) {
+                            getLogger().log(Level.INFO, "[SmartCart DEBUG] Found matching command block type {0} at {1}/{2}/{3}", new Object[]{material.toString(), xOffset, yOffset, zOffset});
+                        }
                         blockList.add(testBlock);
                     }
                 }
@@ -219,9 +224,14 @@ class SmartCartUtil {
         return block != null && block.getType() == Material.RAIL;
     }
 
+    /**
+     * Check if a block is wool.
+     *
+     * @param block
+     * @return
+     */
     boolean isWool(Block block){
-        String BlockMaterial = block.getType().toString();
-        return block != null && BlockMaterial.endsWith("_WOOL");
+        return block != null && Tag.WOOL.isTagged(block.getType());
     }
 
     // Checks to see if a string is really an integer!
@@ -291,9 +301,13 @@ class SmartCartUtil {
         return null;
     }
 
+    /**
+     * Check if a block is a sign.
+     *
+     * @param block
+     * @return
+     */
     boolean isSign(Block block){
-        String BlockMaterial = block.getType().toString();
-
-        return BlockMaterial.endsWith("_SIGN");
+        return Tag.SIGNS.isTagged(block.getType());
     }
 }

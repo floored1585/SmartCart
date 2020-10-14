@@ -3,6 +3,7 @@ normal_cart_speed: 0.4
 max_cart_speed: 1
 slow_cart_speed: 0.1
 pickup_radius: 3
+debug: true
 
 # Don't touch this if you don't know what you're doing!
 control_sign_prefix_regex: "^\\s*SC: "

@@ -6,10 +6,13 @@
 //
 package net.f85.SmartCart;
 
+import java.util.Set;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.logging.Logger;
+import org.bukkit.Material;
+import org.bukkit.Tag;
 
 public class SmartCart extends JavaPlugin {
 
@@ -18,6 +21,7 @@ public class SmartCart extends JavaPlugin {
     static SmartCartUtil util;
     static FileConfiguration config;
     static Logger logger;
+    static boolean isDebug;
 
 
     @Override
@@ -33,12 +37,23 @@ public class SmartCart extends JavaPlugin {
         listener = new SmartCartListener(this);
         util = new SmartCartUtil(this);
         logger = getLogger();
+        isDebug = config.getBoolean("debug");
 
         // Set up command executor
         //commandExecutor = new CommandExecutorUtil(this);
         getLogger().info("Loading commands");
         this.getCommand("sc").setExecutor(new CommandExecutorUtil(this));
         this.getCommand("scSetTag").setExecutor(new CommandSetTag());
+
+        if (isDebug) {
+            getLogger().info("Debug is enabled!");
+            Set<Material> allWools = Tag.WOOL.getValues();
+            getLogger().info("Iterating wool types:");
+            allWools.forEach(thisWool -> {
+                getLogger().info(thisWool.toString());
+            });
+        }
+
         getLogger().info("done");
         getLogger().info("Successfully activated SmartCart");
     }

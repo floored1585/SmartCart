@@ -6,9 +6,9 @@ load: startup
 main: net.f85.SmartCart.SmartCart
 api-version: 1.16
 commands:
-        sc:
-                permission: op
-                description: SmartCart Control
-        scSetTag:
-                permission: true
-                description: SmartCart set cart tag
+    sc:
+        permission: op
+        description: SmartCart Control
+    scSetTag:
+        permission: true
+        description: SmartCart set cart tag

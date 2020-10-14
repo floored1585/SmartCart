@@ -23,6 +23,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import static net.f85.SmartCart.SmartCart.isDebug;
+import static org.bukkit.Bukkit.getLogger;
+import org.bukkit.Tag;
 
 class SmartCartVehicle{
 
@@ -70,7 +73,7 @@ class SmartCartVehicle{
         currentLocation = getLocation();
         previousRoughLocation = currentRoughLocation;
         currentRoughLocation = new int[] {
-                currentLocation.getBlockX(), currentLocation.getBlockY(), currentLocation.getBlockZ()
+            currentLocation.getBlockX(), currentLocation.getBlockY(), currentLocation.getBlockZ()
         };
     }
 
@@ -94,14 +97,15 @@ class SmartCartVehicle{
 
     void setEmptyCartTimer() {
         if(
-                net.f85.SmartCart.SmartCart.config.getBoolean("empty_cart_timer_ignore_commandminecart", true) && isCommandMinecart() ||
-                        net.f85.SmartCart.SmartCart.config.getBoolean("empty_cart_timer_ignore_explosiveminecart", true) && isExplosiveMinecart() ||
-                        net.f85.SmartCart.SmartCart.config.getBoolean("empty_cart_timer_ignore_storagemincart", true) && isStorageMinecart() ||
-                        net.f85.SmartCart.SmartCart.config.getBoolean("empty_cart_timer_ignore_hoppermincart", true) && isHopperMinecart() ||
-                        net.f85.SmartCart.SmartCart.config.getBoolean("empty_cart_timer_ignore_poweredmincart", true) && isPoweredMinecart() ||
-                        net.f85.SmartCart.SmartCart.config.getBoolean("empty_cart_timer_ignore_spawnermincart", true) && isSpawnerMinecart() ||
-                        net.f85.SmartCart.SmartCart.config.getInt("empty_cart_timer") == 0
-                ) {
+            // These items are not in the default config!
+            net.f85.SmartCart.SmartCart.config.getBoolean("empty_cart_timer_ignore_commandminecart", true) && isCommandMinecart() ||
+                net.f85.SmartCart.SmartCart.config.getBoolean("empty_cart_timer_ignore_explosiveminecart", true) && isExplosiveMinecart() ||
+                net.f85.SmartCart.SmartCart.config.getBoolean("empty_cart_timer_ignore_storagemincart", true) && isStorageMinecart() ||
+                net.f85.SmartCart.SmartCart.config.getBoolean("empty_cart_timer_ignore_hoppermincart", true) && isHopperMinecart() ||
+                net.f85.SmartCart.SmartCart.config.getBoolean("empty_cart_timer_ignore_poweredmincart", true) && isPoweredMinecart() ||
+                net.f85.SmartCart.SmartCart.config.getBoolean("empty_cart_timer_ignore_spawnermincart", true) && isSpawnerMinecart() ||
+                net.f85.SmartCart.SmartCart.config.getInt("empty_cart_timer") == 0
+            ) {
             emptyCartTimer = 0;
         } else {
             emptyCartTimer += 1;
@@ -138,42 +142,20 @@ class SmartCartVehicle{
     // This looks two blocks below the rail for a sign. Sets the signText variable to
     //   the sign contents if the sign is a valid control sign, otherwise "".
     void readControlSign() {
-        Block block1 = getCart().getLocation().add(0, -2, 0).getBlock();
-        Block block2 = getCart().getLocation().add(1, -1, 0).getBlock();
-        Block block3 = getCart().getLocation().add(-1, -1, 0).getBlock();
-        Block block4 = getCart().getLocation().add(0, -1, 1).getBlock();
-        Block block5 = getCart().getLocation().add(1, -1, -1).getBlock();
-        Block block6 = getCart().getLocation().add(1, 0, 0).getBlock();
-        Block block7 = getCart().getLocation().add(-1, 0, 0).getBlock();
-        Block block8 = getCart().getLocation().add(0, 0, 1).getBlock();
-        Block block9 = getCart().getLocation().add(0, 0, -1).getBlock();
-        // Return if we're not over a sign
-        if(net.f85.SmartCart.SmartCart.util.isSign(block1)){
-            executeSign(block1);
-        }
-        if(net.f85.SmartCart.SmartCart.util.isSign(block2)){
-            executeSign(block2);
-        }
-        if(net.f85.SmartCart.SmartCart.util.isSign(block3)){
-            executeSign(block3);
-        }
-        if(net.f85.SmartCart.SmartCart.util.isSign(block4)){
-            executeSign(block4);
-        }
-        if(net.f85.SmartCart.SmartCart.util.isSign(block5)){
-            executeSign(block5);
-        }
-        if(net.f85.SmartCart.SmartCart.util.isSign(block6)){
-            executeSign(block6);
-        }
-        if(net.f85.SmartCart.SmartCart.util.isSign(block7)){
-            executeSign(block7);
-        }
-        if(net.f85.SmartCart.SmartCart.util.isSign(block8)){
-            executeSign(block8);
-        }
-        if(net.f85.SmartCart.SmartCart.util.isSign(block9)){
-            executeSign(block9);
+
+        for (int x = -1; x < 2; x++) {
+            for (int y = -2; y < 1; y++) {
+                for (int z = -1; z < 2; z++) {
+
+                    // the 2 blocks right below the cart cannot be signs, so let's skip to speed things up
+                    if (x == 0 && z ==0 && y != -2) {
+                        continue;
+                    }
+
+                    Block thisBlock = getCart().getLocation().add(x, y, z).getBlock();
+                    executeSign(thisBlock);
+                }
+            }
         }
     }
 
@@ -257,47 +239,33 @@ class SmartCartVehicle{
             if (wool.getColor() == DyeColor.ORANGE) {
                 setPreviousWoolColor(DyeColor.ORANGE);
                 setSpeed(net.f85.SmartCart.SmartCart.config.getDouble("slow_cart_speed"));
+                if (isDebug) {
+                    getLogger().info("Orange Wool Block activated, slowing player");
+                }
             }
             if (wool.getColor() == DyeColor.YELLOW) {
                 // If the cart is near the center of the block, kill it.  Otherwise, slow it down.
                 if (isLeavingBlock()) {
                     Entity passenger = cart.getPassengers().get(0);
                     remove(true);
-                    Block block1 = getCart().getLocation().add(0, -2, 0).getBlock();
-                    Block block2 = getCart().getLocation().add(1, -1, 0).getBlock();
-                    Block block3 = getCart().getLocation().add(-1, -1, 0).getBlock();
-                    Block block4 = getCart().getLocation().add(0, -1, 1).getBlock();
-                    Block block5 = getCart().getLocation().add(1, -1, -1).getBlock();
-                    Block block6 = getCart().getLocation().add(1, 0, 0).getBlock();
-                    Block block7 = getCart().getLocation().add(-1, 0, 0).getBlock();
-                    Block block8 = getCart().getLocation().add(0, 0, 1).getBlock();
-                    Block block9 = getCart().getLocation().add(0, 0, -1).getBlock();
-                    if (net.f85.SmartCart.SmartCart.util.isSign(block1)) {
-                        executeEJT(passenger, block1);
-                    }
-                    if (net.f85.SmartCart.SmartCart.util.isSign(block2)) {
-                        executeEJT(passenger, block2);
-                    }
-                    if (net.f85.SmartCart.SmartCart.util.isSign(block3)) {
-                        executeEJT(passenger, block3);
-                    }
-                    if (net.f85.SmartCart.SmartCart.util.isSign(block4)) {
-                        executeEJT(passenger, block4);
-                    }
-                    if (net.f85.SmartCart.SmartCart.util.isSign(block5)) {
-                        executeEJT(passenger, block5);
-                    }
-                    if (net.f85.SmartCart.SmartCart.util.isSign(block6)) {
-                        executeEJT(passenger, block6);
-                    }
-                    if (net.f85.SmartCart.SmartCart.util.isSign(block7)) {
-                        executeEJT(passenger, block7);
-                    }
-                    if (net.f85.SmartCart.SmartCart.util.isSign(block8)) {
-                        executeEJT(passenger, block8);
-                    }
-                    if (net.f85.SmartCart.SmartCart.util.isSign(block9)) {
-                        executeEJT(passenger, block9);
+
+                    // let's iterate all blocks around the rail and check for signs.
+                    // the rail is at y = -1 relative to the cart so we go to -2 there
+                    for (int x = -1; x < 2; x++) {
+                        for (int y = -2; y < 1; y++) {
+                            for (int z = -1; z < 2; z++) {
+
+                                // the 2 blocks right below the cart cannot be signs, so let's skip to speed things up
+                                if (x == 0 && z ==0 && y != -2) {
+                                    continue;
+                                }
+                                Block thisBlock = getCart().getLocation().add(x, y, z).getBlock();
+                                if (net.f85.SmartCart.SmartCart.util.isSign(thisBlock)) {
+                                    executeEJT(passenger, thisBlock);
+
+                                }
+                            }
+                        }
                     }
                 }
             } else {
@@ -508,6 +476,9 @@ class SmartCartVehicle{
     }
 
     private static void spawnCartInNewDirection(SmartCartVehicle oldCart, String direction){
+        if (isDebug) {
+            getLogger().info("Spawn block activated");
+        }
         Entity passenger = null;
         if (!oldCart.cart.getPassengers().isEmpty()) {
             passenger = oldCart.cart.getPassengers().get(0);
@@ -544,6 +515,9 @@ class SmartCartVehicle{
     private void executeSign(Block block) {
         if (isNotOnRail()) {
             return;
+        }
+        if (isDebug) {
+            getLogger().info("Sign activated, processing command");
         }
         boolean foundEndpoint = false;
         Sign sign = (Sign) block.getState(); // Cast to Sign
@@ -639,6 +613,9 @@ class SmartCartVehicle{
 
     private void executeEJT(Entity passenger, Block block){
         Sign sign = (Sign) block.getState();
+        if (isDebug) {
+            getLogger().info("Yellow Wool Block activated, ejecting player");
+        }
         for (Pair<String, String> pair : parseSign(sign)) {
             if (pair.left().equals("$EJT") && pair.right().length() >= 2) {
                 int dist = Integer.parseInt(pair.right().substring(1, pair.right().length()));
