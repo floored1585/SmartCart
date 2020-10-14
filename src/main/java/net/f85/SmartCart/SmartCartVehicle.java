@@ -6,7 +6,6 @@
 //
 package net.f85.SmartCart;
 
-import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -15,7 +14,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.*;
-import org.bukkit.material.Wool;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -25,11 +23,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.bukkit.Bukkit.getLogger;
+import static org.bukkit.Material.*;
+import org.bukkit.Tag;
 
 class SmartCartVehicle{
 
     private Minecart cart;
-    private DyeColor previousWoolColor;
+    private Material previousWoolColor;
     private Location currentLocation;
     private Location previousLocation;
     private int[] currentRoughLocation;
@@ -53,7 +53,7 @@ class SmartCartVehicle{
     private Location getPreviousLocation() {
         return previousLocation;
     }
-    private DyeColor getPreviousWoolColor() {
+    private Material getPreviousWoolColor() {
         return previousWoolColor;
     }
     double getConfigSpeed() {
@@ -65,8 +65,8 @@ class SmartCartVehicle{
     private void setConfigEndpoint(String endpoint) {
         configEndpoint = endpoint;
     }
-    void setPreviousWoolColor(DyeColor color) {
-        previousWoolColor = color;
+    void setPreviousWoolColor(Material woolColor) {
+        previousWoolColor = woolColor;
     }
     void saveCurrentLocation() {
         previousLocation = currentLocation;
@@ -98,13 +98,13 @@ class SmartCartVehicle{
     void setEmptyCartTimer() {
         if(
             // These items are not in the default config!
-            net.f85.SmartCart.SmartCart.config.getBoolean("empty_cart_timer_ignore_commandminecart", true) && isCommandMinecart() ||
-                net.f85.SmartCart.SmartCart.config.getBoolean("empty_cart_timer_ignore_explosiveminecart", true) && isExplosiveMinecart() ||
-                net.f85.SmartCart.SmartCart.config.getBoolean("empty_cart_timer_ignore_storagemincart", true) && isStorageMinecart() ||
-                net.f85.SmartCart.SmartCart.config.getBoolean("empty_cart_timer_ignore_hoppermincart", true) && isHopperMinecart() ||
-                net.f85.SmartCart.SmartCart.config.getBoolean("empty_cart_timer_ignore_poweredmincart", true) && isPoweredMinecart() ||
-                net.f85.SmartCart.SmartCart.config.getBoolean("empty_cart_timer_ignore_spawnermincart", true) && isSpawnerMinecart() ||
-                net.f85.SmartCart.SmartCart.config.getInt("empty_cart_timer") == 0
+            SmartCart.config.getBoolean("empty_cart_timer_ignore_commandminecart", true) && isCommandMinecart() ||
+                SmartCart.config.getBoolean("empty_cart_timer_ignore_explosiveminecart", true) && isExplosiveMinecart() ||
+                SmartCart.config.getBoolean("empty_cart_timer_ignore_storagemincart", true) && isStorageMinecart() ||
+                SmartCart.config.getBoolean("empty_cart_timer_ignore_hoppermincart", true) && isHopperMinecart() ||
+                SmartCart.config.getBoolean("empty_cart_timer_ignore_poweredmincart", true) && isPoweredMinecart() ||
+                SmartCart.config.getBoolean("empty_cart_timer_ignore_spawnermincart", true) && isSpawnerMinecart() ||
+                SmartCart.config.getInt("empty_cart_timer") == 0
             ) {
             emptyCartTimer = 0;
         } else {
@@ -226,16 +226,19 @@ class SmartCartVehicle{
         }
 
         Block block = getBlockBeneath();
-        if (block.getState().getData() instanceof Wool) {
-            Wool wool = (Wool)block.getState().getData();
-            if (wool.getColor() == DyeColor.ORANGE) {
-                setPreviousWoolColor(DyeColor.ORANGE);
+
+        if (Tag.WOOL.isTagged(block.getType())) {
+            if (block.getType() == ORANGE_WOOL) {
+                setPreviousWoolColor(ORANGE_WOOL);
                 setSpeed(SmartCart.config.getDouble("slow_cart_speed"));
                 if (SmartCart.isDebug) {
                     getLogger().info("Orange Wool Block activated, slowing player");
                 }
             }
-            if (wool.getColor() == DyeColor.YELLOW) {
+            if (block.getType() == YELLOW_WOOL) {
+                if (SmartCart.isDebug) {
+                    SmartCart.logger.info("Yellow Wool found...");
+                }
                 // If the cart is near the center of the block, kill it.  Otherwise, slow it down.
                 if (isLeavingBlock()) {
                     Entity passenger = cart.getPassengers().get(0);
@@ -252,10 +255,13 @@ class SmartCartVehicle{
             } else {
                 setSpeed(0.1D);
             }
-            if (wool.getColor() == DyeColor.GREEN) {
+            if (block.getType() == GREEN_WOOL) {
+                if (SmartCart.isDebug) {
+                    SmartCart.logger.info("Green Wool found...");
+                }                
                 //   If we have already executed this block and ARE moving, teleport the cart
                 //   in the direction the player is facing.
-                if (getPreviousWoolColor() == DyeColor.GREEN) {
+                if (getPreviousWoolColor() == GREEN_WOOL) {
                     if (isMoving() && getBlockAheadPassenger() != null) {
                         Block blockAhead = getBlockAheadPassenger();
                         Entity passenger = getCart().getPassengers().get(0);
@@ -270,7 +276,7 @@ class SmartCartVehicle{
                 }
                 // If the cart is near the center of the block, stop it.  Otherwise, slow it down.
                 if (isLeavingBlock()) {
-                    setPreviousWoolColor(DyeColor.GREEN);
+                    setPreviousWoolColor(GREEN_WOOL);
                     setSpeed(0D);
                     sendPassengerMessage("Move in the direction you wish to go.", true);
                 } else {
@@ -278,18 +284,21 @@ class SmartCartVehicle{
                     setSpeed(0.1D);
                 }
             }
-            if (wool.getColor() == DyeColor.RED) {
+            if (block.getType() == RED_WOOL) {
+                if (SmartCart.isDebug) {
+                    SmartCart.logger.info("Red Block found...");
+                }                
                 // If we're not half way through the block, return
                 if (!isLeavingBlock()) {
                     setSpeed(0.1D);
                     return;
                 }
                 // If we just executed the elevator, return
-                if (getPreviousWoolColor() == DyeColor.RED) {
+                if (getPreviousWoolColor() == RED_WOOL) {
                     return;
                 }
 
-                setPreviousWoolColor(DyeColor.RED);
+                setPreviousWoolColor(RED_WOOL);
 
                 // Get the tp target, destroy old cart, spawn new cart at tp target,
                 //   tp passenger, load passenger into new cart
@@ -314,7 +323,7 @@ class SmartCartVehicle{
                 newCart.getCart().setVelocity(cartVelocity);
                 newCart.setSpeed(1);
                 // Set the previous wool color of the new cart, to prevent a tp loop
-                newCart.setPreviousWoolColor(DyeColor.RED);
+                newCart.setPreviousWoolColor(RED_WOOL);
                 transferSettings(newCart);
             }
         }

@@ -11,13 +11,13 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
-import org.bukkit.material.Wool;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import static net.f85.SmartCart.SmartCart.isDebug;
 import static org.bukkit.Bukkit.getLogger;
+import static org.bukkit.Material.*;
 
 class SmartCartUtil {
 
@@ -102,12 +102,12 @@ class SmartCartUtil {
 
 
     private boolean isElevatorBlock(Block block) {
-        return isControlBlock(block) && (block.getState().getData() instanceof Wool && ((Wool)block.getState().getData()).getColor() == DyeColor.RED);
+        return isControlBlock(block) && (Tag.WOOL.isTagged(block.getType()) && (block.getType() == RED_WOOL));
     }
 
 
     boolean isSpawnBlock(Block block) {
-        return isControlBlock(block) && (block.getState().getData() instanceof Wool && ((Wool)block.getState().getData()).getColor() == DyeColor.BLACK);
+        return isControlBlock(block) && (Tag.WOOL.isTagged(block.getType()) && (block.getType() == BLACK_WOOL));
     }
 
 
@@ -262,7 +262,7 @@ class SmartCartUtil {
 
     private Minecart getCartAtBlock(Block block) {
         for (Entity entity : block.getLocation().getChunk().getEntities() ) {
-            // If the entity is a minecart and on the location of the block passed, return the cart
+            // If the entity is a minecart and on the location of the block passed, return the cart            
             if (entity instanceof Minecart
                     && entity.getLocation().getBlockX() == block.getLocation().getX()
                     && entity.getLocation().getBlockY() == block.getLocation().getY()

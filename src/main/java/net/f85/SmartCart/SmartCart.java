@@ -16,12 +16,12 @@ import org.bukkit.Tag;
 
 public class SmartCart extends JavaPlugin {
 
-
     private static SmartCartListener listener;
     static SmartCartUtil util;
     static FileConfiguration config;
     static Logger logger;
     static boolean isDebug;
+    static Set<Material> woolTypes;
     
     // these are the block x/y/z offsets from the minecart positions that we will check
     // for wool or sign blocks around the minecart
@@ -51,6 +51,7 @@ public class SmartCart extends JavaPlugin {
         util = new SmartCartUtil(this);
         logger = getLogger();
         isDebug = config.getBoolean("debug");
+        woolTypes = Tag.WOOL.getValues();
 
         // Set up command executor
         //commandExecutor = new CommandExecutorUtil(this);
@@ -60,9 +61,9 @@ public class SmartCart extends JavaPlugin {
 
         if (isDebug) {
             getLogger().info("Debug is enabled!");
-            Set<Material> allWools = Tag.WOOL.getValues();
-            getLogger().info("Iterating wool types:");
-            allWools.forEach(thisWool -> {
+            
+            getLogger().info("Listing wool types:");
+            woolTypes.forEach(thisWool -> {
                 getLogger().info(thisWool.toString());
             });
         }

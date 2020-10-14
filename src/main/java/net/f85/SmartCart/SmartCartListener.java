@@ -18,11 +18,9 @@ import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.block.Block;
-import org.bukkit.Material;
 
 import java.util.ArrayList;
-import java.util.Set;
-import org.bukkit.Tag;
+
 
 public class SmartCartListener implements Listener {
 
@@ -32,7 +30,6 @@ public class SmartCartListener implements Listener {
         this.plugin = plugin;
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
-
 
     @EventHandler
     public void onVehicleUpdate(VehicleUpdateEvent event) {
@@ -115,7 +112,9 @@ public class SmartCartListener implements Listener {
 
     @EventHandler
     public void onBlockRedstone(BlockRedstoneEvent event) {
-
+        if (SmartCart.isDebug) {
+            SmartCart.logger.info("Checking RedstoneBlocks...");
+        }
         // Return if the redstone current is turning off instead of on
         if ( event.getOldCurrent() > event.getNewCurrent() ) {
             return;
@@ -124,14 +123,15 @@ public class SmartCartListener implements Listener {
         // Function takes a location, radius, and material to search for -- get all command blocks
         int search_radius = 1;
 
-        // let's create a set of all wools that exist in minecraft
-        Set<Material> allWools = Tag.WOOL.getValues();
 
         // let's create a variable for all command blocks to be stored
         ArrayList<Block> cmdBlockList = new ArrayList<>();
 
         // iterate the set of wools and check each of them if they exist around the cart and store it into the BlockList
-        allWools.forEach(thisWool -> {
+        SmartCart.woolTypes.forEach(thisWool -> {
+            if (SmartCart.isDebug) {
+                SmartCart.logger.info("Woolblock found");
+            }            
             cmdBlockList.addAll(SmartCart.util.getBlocksNearby(event.getBlock(), search_radius, thisWool));
         });
 
@@ -145,6 +145,9 @@ public class SmartCartListener implements Listener {
         // Check each of the command blocks and put spawn blocks in an arraylist
         for (Block thisBlock : cmdBlockList) {
             if (SmartCart.util.isSpawnBlock(thisBlock)) {
+                if (SmartCart.isDebug) {
+                    SmartCart.logger.info("Spawnblock found");
+                }
                 spawnBlocks.add(thisBlock);
             }
         }
@@ -173,10 +176,12 @@ public class SmartCartListener implements Listener {
                 boolean foundSignNearby = false;
 
                 // let's iterate all blocks around the rail and check for signs.
-                // the rail is at y = -1 relative to the cart so we go to -2 there
                 for (int[] nextBlock : SmartCart.nextBlocks) {
                     Block thisBlock = smartCart.getCart().getLocation().add(nextBlock[0], nextBlock[1], nextBlock[2]).getBlock();
                     if(SmartCart.util.isSign(thisBlock)){
+                        if (SmartCart.isDebug) {
+                            SmartCart.logger.info("Sign found");
+                        }                        
                         foundSignNearby = true;
                     }
                 }
