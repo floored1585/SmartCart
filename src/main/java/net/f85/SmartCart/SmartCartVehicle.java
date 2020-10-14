@@ -243,8 +243,10 @@ class SmartCartVehicle{
                 if (isLeavingBlock()) {
                     Entity passenger = cart.getPassengers().get(0);
                     remove(true);
-
-                    // we iterate the nextBlocks line by line
+                    if (SmartCart.isDebug) {
+                        getLogger().info("Yellow Wool Block activated, ejecting player");
+                    }
+                    // checking for signs, so we iterate the nextBlocks line by line to search for one
                     for (int[] nextBlock : SmartCart.nextBlocks) {
                         Block thisBlock = getCart().getLocation().add(nextBlock[0], nextBlock[1], nextBlock[2]).getBlock();
                         if (SmartCart.util.isSign(thisBlock)) {
@@ -606,12 +608,14 @@ class SmartCartVehicle{
 
     private void executeEJT(Entity passenger, Block block){
         Sign sign = (Sign) block.getState();
-        if (SmartCart.isDebug) {
-            getLogger().info("Yellow Wool Block activated, ejecting player");
-        }
+
         for (Pair<String, String> pair : parseSign(sign)) {
             if (pair.left().equals("$EJT") && pair.right().length() >= 2) {
                 int dist = Integer.parseInt(pair.right().substring(1, pair.right().length()));
+                if (SmartCart.isDebug) {
+                    getLogger().info("Ejection sign found, ejecting player towards: " + pair.right().charAt(0));
+                }                
+                
                 switch (pair.right().charAt(0)) {
                     case 'N':
                         passenger.teleport(passenger.getLocation().add(0, 0, -dist));
