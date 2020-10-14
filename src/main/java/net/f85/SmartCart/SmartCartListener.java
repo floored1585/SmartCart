@@ -129,9 +129,6 @@ public class SmartCartListener implements Listener {
 
         // iterate the set of wools and check each of them if they exist around the cart and store it into the BlockList
         SmartCart.woolTypes.forEach(thisWool -> {
-            if (SmartCart.isDebug) {
-                SmartCart.logger.info("Woolblock found");
-            }            
             cmdBlockList.addAll(SmartCart.util.getBlocksNearby(event.getBlock(), search_radius, thisWool));
         });
 
