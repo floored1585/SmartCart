@@ -19,3 +19,4 @@ whitelist.json
 /logs/*
 /out/*
 /world*/*
+/target/
