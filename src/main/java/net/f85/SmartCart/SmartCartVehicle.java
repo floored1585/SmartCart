@@ -253,9 +253,9 @@ class SmartCartVehicle{
                             executeEJT(passenger, thisBlock);
                         }
                     }
+                } else {
+                    setSpeed(0.1D);
                 }
-            } else {
-                setSpeed(0.1D);
             }
             if (block.getType() == GREEN_WOOL) {
                 if (SmartCart.isDebug) {
@@ -327,6 +327,9 @@ class SmartCartVehicle{
                 // Set the previous wool color of the new cart, to prevent a tp loop
                 newCart.setPreviousWoolColor(RED_WOOL);
                 transferSettings(newCart);
+            }
+            if (block.getType() == BLACK_WOOL) {
+                setSpeed(0.2D);
             }
         }
     }
