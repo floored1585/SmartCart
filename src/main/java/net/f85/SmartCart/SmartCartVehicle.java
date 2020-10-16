@@ -474,6 +474,14 @@ class SmartCartVehicle{
     }
 
     private static void spawnCartInNewDirection(SmartCartVehicle oldCart, String direction){
+        // Since it wasn't specified whether only new carts should be redirected, act on all carts
+        spawnCartInNewDirection(oldCart, direction, false);
+    }
+    private static void spawnCartInNewDirection(SmartCartVehicle oldCart, String direction, boolean newCartsOnly){
+        // If we're only supposed affect new carts and this one has been alive a while, just return
+        if (newCartsOnly && oldCart.cart.getTicksLived() > 1) {
+            return;
+        }
         if (SmartCart.isDebug) {
             getLogger().info("[SmartCart DEBUG] Spawn block activated");
         }
@@ -525,11 +533,9 @@ class SmartCartVehicle{
         for (Pair<String, String> pair : parseSign(sign)) {
             Pattern p;
             if (pair.left().equals("$LNC")) {
-                if (SmartCart.isDebug) {
-                    getLogger().info("[SmartCart DEBUG] Launching with $LNC: " + pair.right());
-                }
                 if (getCart().getLocation().add(0, -1, 0).getBlock().getType() == BLACK_WOOL) {
-                    spawnCartInNewDirection(this, pair.right());
+                    // Spawn a cart in the direction the sign says, ONLY if it's a new cart
+                    spawnCartInNewDirection(this, pair.right(), true);
                 }
             }
             if (pair.left().equals("$SPD")) {
