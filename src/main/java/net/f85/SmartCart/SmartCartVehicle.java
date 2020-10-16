@@ -97,15 +97,15 @@ class SmartCartVehicle{
 
     void setEmptyCartTimer() {
         if(
-            // These items are not in the default config!
-            SmartCart.config.getBoolean("empty_cart_timer_ignore_commandminecart", true) && isCommandMinecart() ||
+                // These items are not in the default config!
+                SmartCart.config.getBoolean("empty_cart_timer_ignore_commandminecart", true) && isCommandMinecart() ||
                 SmartCart.config.getBoolean("empty_cart_timer_ignore_explosiveminecart", true) && isExplosiveMinecart() ||
                 SmartCart.config.getBoolean("empty_cart_timer_ignore_storagemincart", true) && isStorageMinecart() ||
                 SmartCart.config.getBoolean("empty_cart_timer_ignore_hoppermincart", true) && isHopperMinecart() ||
                 SmartCart.config.getBoolean("empty_cart_timer_ignore_poweredmincart", true) && isPoweredMinecart() ||
                 SmartCart.config.getBoolean("empty_cart_timer_ignore_spawnermincart", true) && isSpawnerMinecart() ||
                 SmartCart.config.getInt("empty_cart_timer") == 0
-            ) {
+          ) {
             emptyCartTimer = 0;
         } else {
             emptyCartTimer += 1;
@@ -253,9 +253,9 @@ class SmartCartVehicle{
                             executeEJT(passenger, thisBlock);
                         }
                     }
+                } else {
+                    setSpeed(0.1D);
                 }
-            } else {
-                setSpeed(0.1D);
             }
             if (block.getType() == GREEN_WOOL) {
                 if (SmartCart.isDebug) {
@@ -327,6 +327,9 @@ class SmartCartVehicle{
                 // Set the previous wool color of the new cart, to prevent a tp loop
                 newCart.setPreviousWoolColor(RED_WOOL);
                 transferSettings(newCart);
+            }
+            if (block.getType() == BLACK_WOOL) {
+                setSpeed(0.2D);
             }
         }
     }
@@ -459,10 +462,10 @@ class SmartCartVehicle{
         for(String pair : signText.split("\\|")) {
             String[] tokens = pair.split(":");
             if (tokens.length != 2) {
-              if (SmartCart.isDebug) {
-                getLogger().info("[SmartCart DEBUG] Invalid sign string: " + pair);
-              }
-              continue;
+                if (SmartCart.isDebug) {
+                    getLogger().info("[SmartCart DEBUG] Invalid sign string: " + pair);
+                }
+                continue;
             }
             tokens[0] = tokens[0].replaceAll("\\s+", "");
             if(!tokens[0].contains("MSG")){
@@ -474,6 +477,14 @@ class SmartCartVehicle{
     }
 
     private static void spawnCartInNewDirection(SmartCartVehicle oldCart, String direction){
+        // Since it wasn't specified whether only new carts should be redirected, act on all carts
+        spawnCartInNewDirection(oldCart, direction, false);
+    }
+    private static void spawnCartInNewDirection(SmartCartVehicle oldCart, String direction, boolean newCartsOnly){
+        // If we're only supposed affect new carts and this one has been alive a while, just return
+        if (newCartsOnly && oldCart.cart.getTicksLived() > 1) {
+            return;
+        }
         if (SmartCart.isDebug) {
             getLogger().info("[SmartCart DEBUG] Spawn block activated");
         }
@@ -525,11 +536,9 @@ class SmartCartVehicle{
         for (Pair<String, String> pair : parseSign(sign)) {
             Pattern p;
             if (pair.left().equals("$LNC")) {
-                if (SmartCart.isDebug) {
-                    getLogger().info("[SmartCart DEBUG] Launching with $LNC: " + pair.right());
-                }
                 if (getCart().getLocation().add(0, -1, 0).getBlock().getType() == BLACK_WOOL) {
-                    spawnCartInNewDirection(this, pair.right());
+                    // Spawn a cart in the direction the sign says, ONLY if it's a new cart
+                    spawnCartInNewDirection(this, pair.right(), true);
                 }
             }
             if (pair.left().equals("$SPD")) {

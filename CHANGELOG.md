@@ -18,3 +18,10 @@ Misc:
 
   - Standardized logging calls (@uncovery)
   - Simplified black wool check (@uncovery)
+
+## 2.0.3 (2020-10-16)
+
+Bugfixes:
+
+  - Fixed an issue with yellow wool logic that would sometimes cause it to not be executed (@floored1585)
+  - $LNC will now only affect newly spawned carts (@floored1585)
