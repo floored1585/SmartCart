@@ -97,15 +97,15 @@ class SmartCartVehicle{
 
     void setEmptyCartTimer() {
         if(
-            // These items are not in the default config!
-            SmartCart.config.getBoolean("empty_cart_timer_ignore_commandminecart", true) && isCommandMinecart() ||
+                // These items are not in the default config!
+                SmartCart.config.getBoolean("empty_cart_timer_ignore_commandminecart", true) && isCommandMinecart() ||
                 SmartCart.config.getBoolean("empty_cart_timer_ignore_explosiveminecart", true) && isExplosiveMinecart() ||
                 SmartCart.config.getBoolean("empty_cart_timer_ignore_storagemincart", true) && isStorageMinecart() ||
                 SmartCart.config.getBoolean("empty_cart_timer_ignore_hoppermincart", true) && isHopperMinecart() ||
                 SmartCart.config.getBoolean("empty_cart_timer_ignore_poweredmincart", true) && isPoweredMinecart() ||
                 SmartCart.config.getBoolean("empty_cart_timer_ignore_spawnermincart", true) && isSpawnerMinecart() ||
                 SmartCart.config.getInt("empty_cart_timer") == 0
-            ) {
+          ) {
             emptyCartTimer = 0;
         } else {
             emptyCartTimer += 1;
@@ -462,10 +462,10 @@ class SmartCartVehicle{
         for(String pair : signText.split("\\|")) {
             String[] tokens = pair.split(":");
             if (tokens.length != 2) {
-              if (SmartCart.isDebug) {
-                getLogger().info("[SmartCart DEBUG] Invalid sign string: " + pair);
-              }
-              continue;
+                if (SmartCart.isDebug) {
+                    getLogger().info("[SmartCart DEBUG] Invalid sign string: " + pair);
+                }
+                continue;
             }
             tokens[0] = tokens[0].replaceAll("\\s+", "");
             if(!tokens[0].contains("MSG")){
