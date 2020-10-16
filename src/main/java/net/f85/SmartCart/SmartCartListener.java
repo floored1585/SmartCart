@@ -20,6 +20,7 @@ import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.block.Block;
 
 import java.util.ArrayList;
+import static org.bukkit.Bukkit.getLogger;
 
 
 public class SmartCartListener implements Listener {
@@ -113,7 +114,7 @@ public class SmartCartListener implements Listener {
     @EventHandler
     public void onBlockRedstone(BlockRedstoneEvent event) {
         if (SmartCart.isDebug) {
-            SmartCart.logger.info("Checking RedstoneBlocks...");
+            getLogger().info("Checking RedstoneBlocks...");
         }
         // Return if the redstone current is turning off instead of on
         if ( event.getOldCurrent() > event.getNewCurrent() ) {
@@ -143,7 +144,7 @@ public class SmartCartListener implements Listener {
         for (Block thisBlock : cmdBlockList) {
             if (SmartCart.util.isSpawnBlock(thisBlock)) {
                 if (SmartCart.isDebug) {
-                    SmartCart.logger.info("Spawnblock found");
+                    getLogger().info("Spawnblock found");
                 }
                 spawnBlocks.add(thisBlock);
             }
@@ -177,8 +178,8 @@ public class SmartCartListener implements Listener {
                     Block thisBlock = smartCart.getCart().getLocation().add(nextBlock[0], nextBlock[1], nextBlock[2]).getBlock();
                     if(SmartCart.util.isSign(thisBlock)){
                         if (SmartCart.isDebug) {
-                            SmartCart.logger.info("Sign found");
-                        }                        
+                            getLogger().info("Sign found");
+                        }
                         foundSignNearby = true;
                     }
                 }
