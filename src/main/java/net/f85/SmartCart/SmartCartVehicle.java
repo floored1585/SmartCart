@@ -232,19 +232,19 @@ class SmartCartVehicle{
                 setPreviousWoolColor(ORANGE_WOOL);
                 setSpeed(SmartCart.config.getDouble("slow_cart_speed"));
                 if (SmartCart.isDebug) {
-                    getLogger().info("Orange Wool Block activated, slowing player");
+                    getLogger().info("[SmartCart DEBUG] Orange Wool Block activated, slowing player");
                 }
             }
             if (block.getType() == YELLOW_WOOL) {
                 if (SmartCart.isDebug) {
-                    SmartCart.logger.info("Yellow Wool found...");
+                    SmartCart.logger.info("[SmartCart DEBUG] Yellow Wool found...");
                 }
                 // If the cart is near the center of the block, kill it.  Otherwise, slow it down.
                 if (isLeavingBlock()) {
                     Entity passenger = cart.getPassengers().get(0);
                     remove(true);
                     if (SmartCart.isDebug) {
-                        getLogger().info("Yellow Wool Block activated, ejecting player");
+                        getLogger().info("[SmartCart DEBUG] Yellow Wool Block activated, ejecting player");
                     }
                     // checking for signs, so we iterate the nextBlocks line by line to search for one
                     for (int[] nextBlock : SmartCart.nextBlocks) {
@@ -259,7 +259,7 @@ class SmartCartVehicle{
             }
             if (block.getType() == GREEN_WOOL) {
                 if (SmartCart.isDebug) {
-                    SmartCart.logger.info("Green Wool found...");
+                    SmartCart.logger.info("[SmartCart DEBUG] Green Wool found...");
                 }                
                 //   If we have already executed this block and ARE moving, teleport the cart
                 //   in the direction the player is facing.
@@ -288,7 +288,7 @@ class SmartCartVehicle{
             }
             if (block.getType() == RED_WOOL) {
                 if (SmartCart.isDebug) {
-                    SmartCart.logger.info("Red Block found...");
+                    SmartCart.logger.info("[SmartCart DEBUG] Red Block found...");
                 }                
                 // If we're not half way through the block, return
                 if (!isLeavingBlock()) {
@@ -454,10 +454,16 @@ class SmartCartVehicle{
         Pattern p = Pattern.compile(SmartCart.config.getString("control_sign_prefix_regex"));
         Matcher m = p.matcher(text);
         // Return if the control prefix isn't matched
-        if (!m.find()) return new ArrayList<>();
+        if (!m.find()) return ret;
         String signText = m.replaceAll(""); // Remove the control prefix
         for(String pair : signText.split("\\|")) {
             String[] tokens = pair.split(":");
+            if (tokens.length != 2) {
+              if (SmartCart.isDebug) {
+                getLogger().info("[SmartCart DEBUG] Invalid sign string: " + pair);
+              }
+              continue;
+            }
             tokens[0] = tokens[0].replaceAll("\\s+", "");
             if(!tokens[0].contains("MSG")){
                 tokens[1] = tokens[1].replaceAll("\\s+", "");
@@ -469,7 +475,7 @@ class SmartCartVehicle{
 
     private static void spawnCartInNewDirection(SmartCartVehicle oldCart, String direction){
         if (SmartCart.isDebug) {
-            getLogger().info("Spawn block activated");
+            getLogger().info("[SmartCart DEBUG] Spawn block activated");
         }
         Entity passenger = null;
         if (!oldCart.cart.getPassengers().isEmpty()) {
@@ -509,7 +515,7 @@ class SmartCartVehicle{
             return;
         }
         if (SmartCart.isDebug) {
-            getLogger().info("Sign activated, processing command, type is " + block.getType());
+            getLogger().info("[SmartCart DEBUG] Sign activated, processing command, type is " + block.getType());
         }
         boolean foundEndpoint = false;
 
@@ -519,7 +525,10 @@ class SmartCartVehicle{
         for (Pair<String, String> pair : parseSign(sign)) {
             Pattern p;
             if (pair.left().equals("$LNC")) {
-                if (getCart().getLocation().add(0, -1, 0).getBlock().getState().getData().toString().contains("BLACK WOOL")) {
+                if (SmartCart.isDebug) {
+                    getLogger().info("[SmartCart DEBUG] Launching with $LNC: " + pair.right());
+                }
+                if (getCart().getLocation().add(0, -1, 0).getBlock().getBlockData().getMaterial().toString().contains("BLACK_WOOL")) {
                     spawnCartInNewDirection(this, pair.right());
                 }
             }
@@ -613,7 +622,7 @@ class SmartCartVehicle{
             if (pair.left().equals("$EJT") && pair.right().length() >= 2) {
                 int dist = Integer.parseInt(pair.right().substring(1, pair.right().length()));
                 if (SmartCart.isDebug) {
-                    getLogger().info("Ejection sign found, ejecting player towards: " + pair.right().charAt(0));
+                    getLogger().info("[SmartCart DEBUG] Ejection sign found, ejecting player towards: " + pair.right().charAt(0));
                 }                
                 
                 switch (pair.right().charAt(0)) {
