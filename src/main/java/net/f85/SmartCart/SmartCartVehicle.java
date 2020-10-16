@@ -49,7 +49,7 @@ class SmartCartVehicle{
     Minecart getCart() {
         return cart;
     }
-    
+
     private Location getPreviousLocation() {
         return previousLocation;
     }
@@ -144,7 +144,7 @@ class SmartCartVehicle{
     void readControlSign() {
         for (int[] nextBlock : SmartCart.nextBlocks) {
             Block thisBlock = getCart().getLocation().add(nextBlock[0], nextBlock[1], nextBlock[2]).getBlock();
-            
+
             if (SmartCart.util.isSign(thisBlock)) {
                 executeSign(thisBlock);
             }
@@ -260,7 +260,7 @@ class SmartCartVehicle{
             if (block.getType() == GREEN_WOOL) {
                 if (SmartCart.isDebug) {
                     SmartCart.logger.info("[SmartCart DEBUG] Green Wool found...");
-                }                
+                }
                 //   If we have already executed this block and ARE moving, teleport the cart
                 //   in the direction the player is facing.
                 if (getPreviousWoolColor() == GREEN_WOOL) {
@@ -289,7 +289,7 @@ class SmartCartVehicle{
             if (block.getType() == RED_WOOL) {
                 if (SmartCart.isDebug) {
                     SmartCart.logger.info("[SmartCart DEBUG] Red Block found...");
-                }                
+                }
                 // If we're not half way through the block, return
                 if (!isLeavingBlock()) {
                     setSpeed(0.1D);
@@ -520,15 +520,15 @@ class SmartCartVehicle{
         boolean foundEndpoint = false;
 
         Sign sign = (Sign) block.getState(); // Cast to Sign
-        
-        
+
+
         for (Pair<String, String> pair : parseSign(sign)) {
             Pattern p;
             if (pair.left().equals("$LNC")) {
                 if (SmartCart.isDebug) {
                     getLogger().info("[SmartCart DEBUG] Launching with $LNC: " + pair.right());
                 }
-                if (getCart().getLocation().add(0, -1, 0).getBlock().getBlockData().getMaterial().toString().contains("BLACK_WOOL")) {
+                if (getCart().getLocation().add(0, -1, 0).getBlock().getType() == BLACK_WOOL) {
                     spawnCartInNewDirection(this, pair.right());
                 }
             }
@@ -623,8 +623,8 @@ class SmartCartVehicle{
                 int dist = Integer.parseInt(pair.right().substring(1, pair.right().length()));
                 if (SmartCart.isDebug) {
                     getLogger().info("[SmartCart DEBUG] Ejection sign found, ejecting player towards: " + pair.right().charAt(0));
-                }                
-                
+                }
+
                 switch (pair.right().charAt(0)) {
                     case 'N':
                         passenger.teleport(passenger.getLocation().add(0, 0, -dist));
