@@ -237,7 +237,7 @@ class SmartCartVehicle{
             }
             if (block.getType() == YELLOW_WOOL) {
                 if (SmartCart.isDebug) {
-                    SmartCart.logger.info("[SmartCart DEBUG] Yellow Wool found...");
+                    getLogger().info("[SmartCart DEBUG] Yellow Wool found...");
                 }
                 // If the cart is near the center of the block, kill it.  Otherwise, slow it down.
                 if (isLeavingBlock()) {
@@ -259,7 +259,7 @@ class SmartCartVehicle{
             }
             if (block.getType() == GREEN_WOOL) {
                 if (SmartCart.isDebug) {
-                    SmartCart.logger.info("[SmartCart DEBUG] Green Wool found...");
+                    getLogger().info("[SmartCart DEBUG] Green Wool found...");
                 }
                 //   If we have already executed this block and ARE moving, teleport the cart
                 //   in the direction the player is facing.
@@ -288,7 +288,7 @@ class SmartCartVehicle{
             }
             if (block.getType() == RED_WOOL) {
                 if (SmartCart.isDebug) {
-                    SmartCart.logger.info("[SmartCart DEBUG] Red Block found...");
+                    getLogger().info("[SmartCart DEBUG] Red Block found...");
                 }
                 // If we're not half way through the block, return
                 if (!isLeavingBlock()) {
